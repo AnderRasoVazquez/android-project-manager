@@ -1,4 +1,4 @@
-package com.example.projectmanager;
+package com.example.projectmanager.view.tasks;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,17 +9,24 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.example.projectmanager.R;
+import com.example.projectmanager.model.Task;
+import com.example.projectmanager.model.WorkSession;
+import com.example.projectmanager.view.tasks.AdapterTasks;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 
-public class ProjectsActivity extends AppCompatActivity {
+public class TasksActivity extends AppCompatActivity {
 
-    ArrayList<Project> projectArrayList;
+    ArrayList<Task> taskArrayList;
     RecyclerView recycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_projects);
+        setContentView(R.layout.activity_tasks);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -32,24 +39,30 @@ public class ProjectsActivity extends AppCompatActivity {
             }
         });
 
-        recycler = findViewById(R.id.projectsReciclerView);
+        recycler = findViewById(R.id.tasksReciclerView);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
         populateArray();
 
-        AdapterProjects adapter = new AdapterProjects(projectArrayList);
+        AdapterTasks adapter = new AdapterTasks(taskArrayList);
+        adapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int index = recycler.getChildLayoutPosition(v);
+                System.out.println("Esta es la posicion");
+                System.out.println(index);
+            }
+        });
         recycler.setAdapter(adapter);
     }
 
-    /**
-     * Llena el array con el contenido del proyecto
-     */
     private void populateArray() {
-        projectArrayList = new ArrayList<>();
+        taskArrayList = new ArrayList<>();
+        Random rand = new Random();
         for (int i = 0; i <= 30; i++) {
-            projectArrayList.add(new Project(2, "New title", "Another description"));
+            taskArrayList.add(new Task(0, rand.nextInt(100),
+                    "1.2 Deploy to production server", "Amazing! What a great description.", new Date(), 2000, new ArrayList<WorkSession>()));
         }
     }
-
 
 }

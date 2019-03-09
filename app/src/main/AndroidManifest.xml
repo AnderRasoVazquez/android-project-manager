@@ -9,10 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".TasksActivity"
-            android:label="@string/title_activity_tasks"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".view.register.RegisterActivity"></activity>
+        <activity android:name=".view.login.LoginActivity" />
+        <activity android:name=".Debug">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,14 +19,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProjectsActivity"
+            android:name=".view.tasks.TasksActivity"
+            android:label="@string/title_activity_tasks"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".view.projects.ProjectsActivity"
             android:label="@string/title_activity_projects"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

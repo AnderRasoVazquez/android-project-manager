@@ -3,4 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_projects">ProjectsActivity</string>
     <string name="title_activity_tasks">TasksActivity</string>
+    <string name="txtEmail">email</string>
+    <string name="txtLoginPassword">password</string>
+    <string name="btnLogin">login</string>
+    <string name="btnRegister">register</string>
+    <string name="txtRepeatPassword">repeat password</string>
+    <string name="txtUsername">username</string>
 </resources>

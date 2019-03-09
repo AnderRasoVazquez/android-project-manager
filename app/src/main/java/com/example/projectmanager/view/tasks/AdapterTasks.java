@@ -1,4 +1,4 @@
-package com.example.projectmanager;
+package com.example.projectmanager.view.tasks;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.projectmanager.R;
+import com.example.projectmanager.model.Task;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.text.DateFormat;
@@ -14,9 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTasks> {
+public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTasks> implements View.OnClickListener {
 
     ArrayList<Task> taskArrayList;
+    private View.OnClickListener listener;
 
     public AdapterTasks(ArrayList<Task> taskArrayList) {
         this.taskArrayList = taskArrayList;
@@ -27,6 +30,7 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
     public ViewHolderTasks onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.task_card, viewGroup, false);
+        view.setOnClickListener(this);
         return new ViewHolderTasks(view);
     }
 
@@ -38,6 +42,17 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
     @Override
     public int getItemCount() {
         return taskArrayList.size();
+    }
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (listener != null) {
+            listener.onClick(v);
+        }
     }
 
     public class ViewHolderTasks extends RecyclerView.ViewHolder {
@@ -64,13 +79,7 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
             String dueString = df.format(dueDate);
 
             due.setText(dueString);
-            int totalSeconds = task.getTotalTime();
-            int seconds = totalSeconds % 60;
-            int totalMinutes = seconds / 60;
-            int minutes = seconds % 60;
-            int totalHours = totalMinutes / 60;
-//            String elapsedTime = totalHours + ":" + minutes + ":" + seconds;
-            String elapsedTime = "00:00:00";
+            String elapsedTime = Double.toString(task.getTotalTime());
             totalTime.setText(elapsedTime);
             bar.setProgress((float) task.getProgress());
 //            bar.setColor();

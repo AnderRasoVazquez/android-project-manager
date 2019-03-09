@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,23 +26,23 @@
                 android:id="@+id/calendarImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/taskDesc"
                 app:srcCompat="@drawable/ic_insert_invitation_black_24dp" />
 
             <com.mikhaellopez.circularprogressbar.CircularProgressBar
                 android:id="@+id/circularProgressBar"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:cpb_background_progressbar_color="#D2D2D2"
                 app:cpb_background_progressbar_width="3dp"
                 app:cpb_progress="65"
                 app:cpb_progressbar_color="#a56de2"
-                app:cpb_progressbar_width="5dp"
+                app:cpb_progressbar_width="3dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,10 +50,10 @@
                 android:id="@+id/taskName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="35dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="1.2 Hacer tests"
+                android:text="2.3 Deploy to production server"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +70,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="No description."
                 android:textSize="10sp"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/taskName" />
@@ -77,20 +79,20 @@
                 android:id="@+id/dueDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
                 android:text="19/02/04"
-                android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/calendarImageView"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toStartOf="@+id/calendarImageView"
                 app:layout_constraintTop_toBottomOf="@+id/taskDesc" />
 
             <ImageView
                 android:id="@+id/hourImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/totalTime"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/taskDesc"
                 app:srcCompat="@drawable/ic_access_time_black_24dp" />
 
@@ -98,10 +100,11 @@
                 android:id="@+id/totalTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
                 android:text="00:00"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="10sp"
+                app:layout_constraintStart_toEndOf="@+id/hourImageView"
                 app:layout_constraintTop_toBottomOf="@+id/taskDesc" />
 
         </android.support.constraint.ConstraintLayout>
