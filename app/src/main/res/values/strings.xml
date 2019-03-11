@@ -9,4 +9,9 @@
     <string name="btnRegister">register</string>
     <string name="txtRepeatPassword">repeat password</string>
     <string name="txtUsername">username</string>
+    <string name="txtNoAccount">Don\'t have an Account?</string>
+    <string name="btnGoRegister">register</string>
+    <string name="cantLogin">User not found</string>
+    <string name="passNotEqual">Passwords aren\'t equal</string>
+    <string name="userExists">That user already exists</string>
 </resources>
