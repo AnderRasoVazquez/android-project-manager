@@ -14,4 +14,5 @@
     <string name="cantLogin">User not found</string>
     <string name="passNotEqual">Passwords aren\'t equal</string>
     <string name="userExists">That user already exists</string>
+    <string name="blankTitleProject">Not named</string>
 </resources>

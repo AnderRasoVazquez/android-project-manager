@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
 
+import com.example.projectmanager.R;
 import com.example.projectmanager.utils.DBFields;
 
 import org.json.JSONException;
@@ -34,8 +35,10 @@ public class DB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DBFields.CREATE_TABLE_USERS);
         db.execSQL(DBFields.CREATE_TABLE_PROYECTS);
+        db.execSQL(DBFields.CREATE_TABLE_MEMBERS);
         db.execSQL(DBFields.CREATE_TABLE_TASKS);
         db.execSQL(DBFields.CREATE_TABLE_WORKTIME);
+        db.execSQL(DBFields.CREATE_VIEW_PROJECTMEMBERS);
 
         ContentValues demoUser = new ContentValues();
         demoUser.put(DBFields.TABLE_USERS_ID, "demo");
@@ -43,6 +46,15 @@ public class DB extends SQLiteOpenHelper {
         demoUser.put(DBFields.TABLE_USERS_PASS, "demo");
 
         db.insert(DBFields.TABLE_USERS, null, demoUser);
+
+        ContentValues demoProject = new ContentValues();
+        demoProject.put(DBFields.TABLE_PROJECTS_NAME, R.string.blankTitleProject);
+        long idDemoProject = db.insert(DBFields.TABLE_PROJECTS, null, demoProject);
+
+        ContentValues demoMember = new ContentValues();
+        demoMember.put(DBFields.TABLE_MEMBERS_IDUSER, "demo");
+        demoMember.put(DBFields.TABLE_MEMBERS_IDPROJECT, idDemoProject);
+        db.insert(DBFields.TABLE_MEMBERS, null, demoMember);
     }
 
     @Override
@@ -79,13 +91,14 @@ public class DB extends SQLiteOpenHelper {
 
             if (!userExists(email)) {
                 SQLiteDatabase db = instance.getReadableDatabase();
-                ContentValues demoUser = new ContentValues();
 
-                demoUser.put(DBFields.TABLE_USERS_ID, email);
-                demoUser.put(DBFields.TABLE_USERS_NAME, name);
-                demoUser.put(DBFields.TABLE_USERS_PASS, pass);
+                ContentValues newUser = new ContentValues();
+                newUser.put(DBFields.TABLE_USERS_ID, email);
+                newUser.put(DBFields.TABLE_USERS_NAME, name);
+                newUser.put(DBFields.TABLE_USERS_PASS, pass);
 
-                db.insert(DBFields.TABLE_USERS, null, demoUser);
+                db.insert(DBFields.TABLE_USERS, null, newUser);
+                db.close();
                 return true;
             } else {
                 return false;
@@ -127,5 +140,39 @@ public class DB extends SQLiteOpenHelper {
         db.close();
 
         return exists;
+    }
+
+    // TODO
+    public String getProjects(String jsonUser) {
+        try {
+            JSONObject json = new JSONObject(jsonUser);
+            String email = json.getString("email");
+
+//            select projects.id, projects.name from projects
+//            inner join members on members.id_project = projects.id
+//            where members.id_user = 'ander2';
+
+            SQLiteDatabase db = instance.getReadableDatabase();
+
+            String[] fields = new String[] {DBFields.TABLE_USERS_ID, DBFields.TABLE_USERS_NAME};
+            String[] args = new String[] {email};
+
+            Cursor cursor = db.query(DBFields.TABLE_USERS, fields, DBFields.TABLE_USERS_ID + "=?", args, null, null, null);
+
+            boolean exists;
+            exists = cursor.getCount() > 0;
+            cursor.close();
+            db.close();
+
+//            SELECT a1, a2, b1, b2
+//            FROM A
+//            INNER JOIN B on B.f = A.f;
+            return null;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }
