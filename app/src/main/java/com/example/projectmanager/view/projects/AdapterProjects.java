@@ -10,12 +10,15 @@ import android.widget.TextView;
 import com.example.projectmanager.R;
 import com.example.projectmanager.model.Project;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHolderProjects> implements View.OnClickListener {
+public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHolderProjects> implements View.OnClickListener, View.OnLongClickListener {
 
     ArrayList<Project> projectArrayList;
     private View.OnClickListener listener;
+    private View.OnLongClickListener longListener;
 
     public AdapterProjects(ArrayList<Project> projectArrayList) {
         this.projectArrayList = projectArrayList;
@@ -27,6 +30,7 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.project_card, null);
         view.setOnClickListener(this);
+        view.setOnLongClickListener(this);
         return new ViewHolderProjects(view);
     }
 
@@ -44,12 +48,24 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
         this.listener = listener;
     }
 
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
+        this.longListener = listener;
+    }
+
     @Override
     public void onClick(View v) {
         if (listener != null) {
             listener.onClick(v);
         }
 
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (longListener != null) {
+            longListener.onLongClick(v);
+        }
+        return true;
     }
 
     public class ViewHolderProjects extends RecyclerView.ViewHolder {

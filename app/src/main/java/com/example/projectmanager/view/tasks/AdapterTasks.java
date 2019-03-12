@@ -16,10 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTasks> implements View.OnClickListener {
+public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTasks> implements View.OnClickListener, View.OnLongClickListener {
 
     ArrayList<Task> taskArrayList;
     private View.OnClickListener listener;
+    private View.OnLongClickListener longListener;
 
     public AdapterTasks(ArrayList<Task> taskArrayList) {
         this.taskArrayList = taskArrayList;
@@ -31,6 +32,7 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.task_card, viewGroup, false);
         view.setOnClickListener(this);
+        view.setOnLongClickListener(this);
         return new ViewHolderTasks(view);
     }
 
@@ -48,11 +50,23 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
         this.listener = listener;
     }
 
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
+        this.longListener = listener;
+    }
+
     @Override
     public void onClick(View v) {
         if (listener != null) {
             listener.onClick(v);
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (longListener != null) {
+            longListener.onLongClick(v);
+        }
+        return true;
     }
 
     public class ViewHolderTasks extends RecyclerView.ViewHolder {

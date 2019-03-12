@@ -15,4 +15,8 @@
     <string name="passNotEqual">Passwords aren\'t equal</string>
     <string name="userExists">That user already exists</string>
     <string name="blankTitleProject">Not named</string>
+    <string name="blankDescriptionProject">No description.</string>
+    <string name="choose">Choose</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

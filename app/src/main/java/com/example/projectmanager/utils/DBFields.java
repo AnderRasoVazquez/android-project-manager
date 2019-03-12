@@ -44,11 +44,11 @@ public class DBFields {
     public static final String CREATE_VIEW_PROJECTMEMBERS = "" +
             " CREATE VIEW " + VIEW_PROJECTMEMBERS + " AS " +
             " SELECT " +
-            TABLE_USERS + "." + TABLE_USERS_ID + ", " +
-            TABLE_USERS + "." + TABLE_USERS_NAME + ", " +
-            TABLE_PROJECTS + "." + TABLE_PROJECTS_ID + ", " +
-            TABLE_PROJECTS + "." + TABLE_PROJECTS_NAME + ", " +
-            TABLE_PROJECTS + "." + TABLE_PROJECTS_DESC +
+            TABLE_USERS + "." + TABLE_USERS_ID + " AS " + VIEW_PROJECTMEMBERS_IDUSER + ", " +
+            TABLE_USERS + "." + TABLE_USERS_NAME + " AS " + VIEW_PROJECTMEMBERS_NAMEUSER + ", " +
+            TABLE_PROJECTS + "." + TABLE_PROJECTS_ID + " AS " + VIEW_PROJECTMEMBERS_IDPROJECT + ", " +
+            TABLE_PROJECTS + "." + TABLE_PROJECTS_NAME + " AS " + VIEW_PROJECTMEMBERS_NAMEPROJECT + ", " +
+            TABLE_PROJECTS + "." + TABLE_PROJECTS_DESC + " AS " + VIEW_PROJECTMEMBERS_DESCPROJECT +
             " FROM " + TABLE_PROJECTS +
             " INNER JOIN " + TABLE_MEMBERS + " ON " + TABLE_MEMBERS + "." + TABLE_MEMBERS_IDPROJECT +"="+ TABLE_PROJECTS +"."+ TABLE_PROJECTS_ID +
             " INNER JOIN " + TABLE_USERS + " ON " + TABLE_MEMBERS + "." + TABLE_MEMBERS_IDUSER +"="+ TABLE_USERS +"."+ TABLE_USERS_ID +

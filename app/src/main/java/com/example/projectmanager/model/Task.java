@@ -10,15 +10,17 @@ public class Task {
     private String name;
     private String desc;
     private Date due;
-    private int expected;
+    private Date init;
+    private double expected;
     private ArrayList<WorkSession> workSessions;
 
-    public Task(int id, int progress, String name, String desc, Date due, int expected, ArrayList<WorkSession> workSessions) {
+    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected, ArrayList<WorkSession> workSessions) {
         this.id = id;
         this.progress = progress;
         this.name = name;
         this.desc = desc;
         this.due = due;
+        this.init = init;
         this.expected = expected;
         this.workSessions = workSessions;
     }
@@ -55,11 +57,11 @@ public class Task {
         this.due = due;
     }
 
-    public int getExpected() {
+    public double getExpected() {
         return expected;
     }
 
-    public void setExpected(int expected) {
+    public void setExpected(double expected) {
         this.expected = expected;
     }
 
@@ -69,6 +71,18 @@ public class Task {
             result += workSession.getTime();
         }
         return result;
+    }
+
+    public Date getInit() {
+        return init;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setInit(Date init) {
+        this.init = init;
     }
 
 }

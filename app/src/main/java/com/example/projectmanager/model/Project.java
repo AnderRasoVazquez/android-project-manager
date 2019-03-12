@@ -11,6 +11,10 @@ public class Project {
         this.desc = desc;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
