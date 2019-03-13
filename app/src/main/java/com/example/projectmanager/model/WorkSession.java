@@ -3,10 +3,12 @@ package com.example.projectmanager.model;
 import java.util.Date;
 
 public class WorkSession {
+    private int id;
+
     private Date date;
     private double time;
 
-    public WorkSession(Date date, double time) {
+    public WorkSession(int id, Date date, double time) {
         this.date = date;
         this.time = time;
     }
@@ -26,4 +28,9 @@ public class WorkSession {
     public void setTime(double time) {
         this.time = time;
     }
+
+    public int getId() {
+        return id;
+    }
+
 }

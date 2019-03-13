@@ -68,7 +68,29 @@ public class DB extends SQLiteOpenHelper {
         demoTask.put(DBFields.TABLE_TASKS_EXPECTED, 7.5);
         demoTask.put(DBFields.TABLE_TASKS_PROGRESS, 50);
         demoTask.put(DBFields.TABLE_TASKS_IDPROJECT, idDemoProject);
-        db.insert(DBFields.TABLE_TASKS, null, demoTask);
+        long idTask = db.insert(DBFields.TABLE_TASKS, null, demoTask);
+
+        ContentValues demoWorktime;
+        demoWorktime = new ContentValues();
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDPROJECT, idDemoProject);
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDTASK, idTask);
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDUSER, "demo");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "18/11/02");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_HOURS, 7.5);
+        db.insert(DBFields.TABLE_WORKTIME, null, demoWorktime);
+//        public static final String TABLE_WORKTIME = "worktime";
+//        public static final String TABLE_WORKTIME_IDUSER = "id_user";
+//        public static final String TABLE_WORKTIME_IDTASK = "id_task";
+//        public static final String TABLE_WORKTIME_IDPROJECT = "id_project";
+//        public static final String TABLE_WORKTIME_DATE = "date";
+//        public static final String TABLE_WORKTIME_HOURS = "hours";
+        demoWorktime = new ContentValues();
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDPROJECT, idDemoProject);
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDTASK, idTask);
+        demoWorktime.put(DBFields.TABLE_WORKTIME_IDUSER, "demo");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "18/11/22");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_HOURS, 3);
+        db.insert(DBFields.TABLE_WORKTIME, null, demoWorktime);
     }
 
     @Override
@@ -127,8 +149,8 @@ public class DB extends SQLiteOpenHelper {
     public boolean userExists(String email, String pass) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
-        String[] fields = new String[] {DBFields.TABLE_USERS_ID, DBFields.TABLE_USERS_NAME};
-        String[] args = new String[] {email, pass};
+        String[] fields = new String[]{DBFields.TABLE_USERS_ID, DBFields.TABLE_USERS_NAME};
+        String[] args = new String[]{email, pass};
 
         Cursor cursor = db.query(DBFields.TABLE_USERS, fields, DBFields.TABLE_USERS_ID + "=? AND " + DBFields.TABLE_USERS_PASS + "=?", args, null, null, null);
 
@@ -143,8 +165,8 @@ public class DB extends SQLiteOpenHelper {
     public boolean userExists(String email) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
-        String[] fields = new String[] {DBFields.TABLE_USERS_ID, DBFields.TABLE_USERS_NAME};
-        String[] args = new String[] {email};
+        String[] fields = new String[]{DBFields.TABLE_USERS_ID, DBFields.TABLE_USERS_NAME};
+        String[] args = new String[]{email};
 
         Cursor cursor = db.query(DBFields.TABLE_USERS, fields, DBFields.TABLE_USERS_ID + "=?", args, null, null, null);
 
@@ -163,7 +185,7 @@ public class DB extends SQLiteOpenHelper {
 
             SQLiteDatabase db = instance.getReadableDatabase();
 
-            String[] fields = new String[] {
+            String[] fields = new String[]{
                     DBFields.VIEW_PROJECTMEMBERS_IDUSER,
                     DBFields.VIEW_PROJECTMEMBERS_IDPROJECT,
                     DBFields.VIEW_PROJECTMEMBERS_DESCPROJECT,
@@ -171,7 +193,7 @@ public class DB extends SQLiteOpenHelper {
                     DBFields.VIEW_PROJECTMEMBERS_NAMEUSER
             };
 
-            String[] args = new String[] {email};
+            String[] args = new String[]{email};
 
             Cursor cursor = db.query(DBFields.VIEW_PROJECTMEMBERS, fields, DBFields.VIEW_PROJECTMEMBERS_IDUSER + "=?", args, null, null, null);
 
@@ -220,7 +242,7 @@ public class DB extends SQLiteOpenHelper {
 
             SQLiteDatabase db = instance.getReadableDatabase();
 
-            String[] fields = new String[] {
+            String[] fields = new String[]{
                     DBFields.TABLE_TASKS_ID,
                     DBFields.TABLE_TASKS_NAME,
                     DBFields.TABLE_TASKS_DESC,
@@ -231,7 +253,7 @@ public class DB extends SQLiteOpenHelper {
                     DBFields.TABLE_TASKS_IDPROJECT
             };
 
-            String[] args = new String[] {id_proyect};
+            String[] args = new String[]{id_proyect};
 
             Cursor cursor = db.query(DBFields.TABLE_TASKS, fields, DBFields.TABLE_TASKS_IDPROJECT + "=?", args, null, null, null);
 
@@ -242,15 +264,16 @@ public class DB extends SQLiteOpenHelper {
                 jarray.put(getTask(cursor));
             }
 
-            jsonResult.put("tasks", jarray);
             cursor.close();
             db.close();
 
-            for(int i = 0; i < jarray.length(); i++) {
-                JSONObject oneObj = jarray.getJSONObject(i);
-                int taskId = oneObj.getInt(DBFields.TABLE_TASKS_ID);
-                oneObj.put("worktime", getWorkedTime(taskId));
-            }
+            jsonResult.put("tasks", jarray);
+
+//            for(int i = 0; i < jarray.length(); i++) {
+//                JSONObject oneObj = jarray.getJSONObject(i);
+//                int taskId = oneObj.getInt(DBFields.TABLE_TASKS_ID);
+//                oneObj.put("worktime", getWorkedTime(taskId));
+//            }
 
             return jsonResult.toString(4);
 
@@ -300,36 +323,45 @@ public class DB extends SQLiteOpenHelper {
     }
 
 
-    public JSONArray getWorkedTime(int idTask) {
-        SQLiteDatabase db = instance.getReadableDatabase();
+    public String getWorkedTime(String taskJson) {
+        JSONObject json = new JSONObject();
+        try {
+            JSONObject oneJson = new JSONObject(taskJson);
+            int idTask = oneJson.getInt("id_task");
 
-        String[] fields = new String[] {
+            SQLiteDatabase db = instance.getReadableDatabase();
+
+            String[] fields = new String[]{
 //                DBFields.TABLE_WORKTIME_IDUSER,
 //                DBFields.TABLE_WORKTIME_IDTASK,
 //                DBFields.TABLE_WORKTIME_IDPROJECT,
-                DBFields.TABLE_WORKTIME_DATE,
-                DBFields.TABLE_WORKTIME_HOURS
-        };
+                    DBFields.TABLE_WORKTIME_ID,
+                    DBFields.TABLE_WORKTIME_DATE,
+                    DBFields.TABLE_WORKTIME_HOURS
+            };
 
-        String[] args = new String[] {Integer.toString(idTask)};
-        Cursor cursor = db.query(DBFields.TABLE_WORKTIME, fields, DBFields.TABLE_WORKTIME_IDTASK + "=?", args, null, null, null);
+            String[] args = new String[]{Integer.toString(idTask)};
+            Cursor cursor = db.query(DBFields.TABLE_WORKTIME, fields, DBFields.TABLE_WORKTIME_IDTASK + "=?", args, null, null, null);
 
-        JSONArray jarray = new JSONArray();
+            JSONArray jarray = new JSONArray();
 
-        while (cursor.moveToNext()) {
-            jarray.put(formatOneWorkedTime(cursor));
+            while (cursor.moveToNext()) {
+                jarray.put(formatOneWorkedTime(cursor));
+            }
+
+            json.put("worktime", jarray);
+            cursor.close();
+            db.close();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        cursor.close();
-        db.close();
-
-        return jarray;
+        return json.toString();
     }
 
     public void deleteProject(int idProject) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
-        String[] args = new String[] {Integer.toString(idProject)};
+        String[] args = new String[]{Integer.toString(idProject)};
         db.delete(DBFields.TABLE_PROJECTS, DBFields.TABLE_PROJECTS_ID + "=?", args);
 
         db.close();
@@ -338,7 +370,7 @@ public class DB extends SQLiteOpenHelper {
     public void deleteTask(int idTask) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
-        String[] args = new String[] {Integer.toString(idTask)};
+        String[] args = new String[]{Integer.toString(idTask)};
         db.delete(DBFields.TABLE_TASKS, DBFields.TABLE_TASKS_ID + "=?", args);
 
         db.close();
@@ -348,6 +380,9 @@ public class DB extends SQLiteOpenHelper {
         JSONObject json = new JSONObject();
         int columnIndex;
         try {
+            columnIndex = cursor.getColumnIndex(DBFields.TABLE_WORKTIME_ID);
+            json.put(DBFields.TABLE_WORKTIME_ID, cursor.getInt(columnIndex));
+
             columnIndex = cursor.getColumnIndex(DBFields.TABLE_WORKTIME_DATE);
             json.put(DBFields.TABLE_WORKTIME_DATE, cursor.getString(columnIndex));
 
@@ -357,5 +392,14 @@ public class DB extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return json;
+    }
+
+    public void deleteWork(int idWork) {
+        SQLiteDatabase db = instance.getReadableDatabase();
+
+        String[] args = new String[]{Integer.toString(idWork)};
+        db.delete(DBFields.TABLE_WORKTIME, DBFields.TABLE_WORKTIME_ID + "=?", args);
+
+        db.close();
     }
 }

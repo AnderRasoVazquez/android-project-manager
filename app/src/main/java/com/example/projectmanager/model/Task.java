@@ -12,9 +12,9 @@ public class Task {
     private Date due;
     private Date init;
     private double expected;
-    private ArrayList<WorkSession> workSessions;
+    private double totalTime = 0;
 
-    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected, ArrayList<WorkSession> workSessions) {
+    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected, double totalTime) {
         this.id = id;
         this.progress = progress;
         this.name = name;
@@ -22,7 +22,7 @@ public class Task {
         this.due = due;
         this.init = init;
         this.expected = expected;
-        this.workSessions = workSessions;
+        this.totalTime = totalTime;
     }
 
     public int getProgress() {
@@ -66,11 +66,7 @@ public class Task {
     }
 
     public double getTotalTime() {
-        double result = 0;
-        for (WorkSession workSession : workSessions) {
-            result += workSession.getTime();
-        }
-        return result;
+        return totalTime;
     }
 
     public Date getInit() {

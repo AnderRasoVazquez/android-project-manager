@@ -2,6 +2,7 @@ package com.example.projectmanager.view.tasks;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import com.example.projectmanager.model.Task;
 import com.example.projectmanager.model.WorkSession;
 import com.example.projectmanager.utils.DBFields;
 import com.example.projectmanager.view.tasks.AdapterTasks;
+import com.example.projectmanager.view.worktime.WorkActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,8 +63,12 @@ public class TasksActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int index = recycler.getChildLayoutPosition(v);
-                System.out.println("Click corto");
-                System.out.println(index);
+                int taskId = taskArrayList.get(index).getId();
+                Intent intent = new Intent(TasksActivity.this, WorkActivity.class);
+                intent.putExtra("id_project", projectId);
+                intent.putExtra("email", email);
+                intent.putExtra("id_task", taskId);
+                startActivity(intent);
             }
         });
 
@@ -99,6 +105,8 @@ public class TasksActivity extends AppCompatActivity {
             JSONObject jsonProject = new JSONObject();
             jsonProject.put("id_project", projectId);
             String stringResponse = DB.getInstance(getApplicationContext()).getTasks(jsonProject.toString());
+            System.out.println("LOLOLOL");
+            System.out.println(stringResponse);
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray jarray = jsonResponse.getJSONArray("tasks");
 
@@ -132,7 +140,8 @@ public class TasksActivity extends AppCompatActivity {
 //                                obj.getString(DBFields.TABLE_TASKS_DUEDATE),
 //                                obj.getString(DBFields.TABLE_TASKS_INITDATE),
                                 obj.getDouble(DBFields.TABLE_TASKS_EXPECTED),
-                                new ArrayList<WorkSession>()
+                                // TODO calcular en la BD
+                                0
                         )
                 );
             }

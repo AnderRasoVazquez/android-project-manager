@@ -27,6 +27,7 @@ public class DBFields {
     public static final String TABLE_TASKS_IDPROJECT = "id_project";
 
     public static final String TABLE_WORKTIME = "worktime";
+    public static final String TABLE_WORKTIME_ID = "id";
     public static final String TABLE_WORKTIME_IDUSER = "id_user";
     public static final String TABLE_WORKTIME_IDTASK = "id_task";
     public static final String TABLE_WORKTIME_IDPROJECT = "id_project";
@@ -97,13 +98,14 @@ public class DBFields {
 
     public static final String CREATE_TABLE_WORKTIME = "" +
             "CREATE TABLE " + TABLE_WORKTIME + "(" +
+                TABLE_WORKTIME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 TABLE_WORKTIME_IDUSER + "   TEXT NOT NULL," +
                 TABLE_WORKTIME_IDTASK + " TEXT       NOT NULL," +
                 TABLE_WORKTIME_IDPROJECT + " TEXT      NOT NULL," +
                 TABLE_WORKTIME_DATE + " DATE      NOT NULL," +
                 TABLE_WORKTIME_HOURS + " REAL      NOT NULL," +
 
-                " PRIMARY KEY (" + TABLE_WORKTIME_IDUSER + ", " + TABLE_WORKTIME_IDTASK + ", " + TABLE_WORKTIME_IDPROJECT + ", " + TABLE_WORKTIME_DATE + ")" +
+//                " PRIMARY KEY (" + TABLE_WORKTIME_ID + ", " + TABLE_WORKTIME_IDUSER + ", " + TABLE_WORKTIME_IDTASK + ", " + TABLE_WORKTIME_IDPROJECT + ", " + TABLE_WORKTIME_DATE + ")" +
 
                 " FOREIGN KEY (" + TABLE_WORKTIME_IDUSER + ") REFERENCES " + TABLE_USERS + "(" + TABLE_USERS_ID + ")" +
                 " FOREIGN KEY (" + TABLE_WORKTIME_IDTASK + ") REFERENCES " + TABLE_TASKS + "(" + TABLE_TASKS_ID + ") ON DELETE CASCADE" +

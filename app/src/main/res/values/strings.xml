@@ -19,4 +19,6 @@
     <string name="choose">Choose</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="title_activity_work">WorkActivity</string>
+    <string name="title_activity_work_time">WorkTimeActivity</string>
 </resources>
