@@ -12,9 +12,8 @@ public class Task {
     private Date due;
     private Date init;
     private double expected;
-    private double totalTime = 0;
 
-    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected, double totalTime) {
+    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected) {
         this.id = id;
         this.progress = progress;
         this.name = name;
@@ -22,7 +21,6 @@ public class Task {
         this.due = due;
         this.init = init;
         this.expected = expected;
-        this.totalTime = totalTime;
     }
 
     public int getProgress() {
@@ -63,10 +61,6 @@ public class Task {
 
     public void setExpected(double expected) {
         this.expected = expected;
-    }
-
-    public double getTotalTime() {
-        return totalTime;
     }
 
     public Date getInit() {

@@ -8,7 +8,7 @@
 + Usar una base de datos local, para listar, añadir y modificar elementos y características de cada elemento.
   + [x] Para gestionar proyectos tareas
 + Uso de diálogos.
-  + [x] Para confirmar acciones
+  + [x] Para confirmar acciones menus de opciones
 + Usar notificaciones locales.
   + [ ] Para gestionar el tiempo invertido.
 + Controlar que la aplicación se comporte correctamente y no se pierda información, aunque en medio de la ejecución recibamos una llamada telefónica, giremos el móvil, etc. No se puede impedir que la aplicación se gire. Controlar la pila de actividades para evitar incoherencias.

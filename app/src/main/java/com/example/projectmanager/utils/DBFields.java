@@ -84,14 +84,14 @@ public class DBFields {
             "CREATE TABLE " + TABLE_TASKS + "(" +
                 TABLE_TASKS_ID + "   INTEGER PRIMARY KEY AUTOINCREMENT," +
                 TABLE_TASKS_NAME + " TEXT       NOT NULL," +
-                TABLE_TASKS_DESC + " TEXT      ," +
+                TABLE_TASKS_DESC + " TEXT  ," +
 
                 TABLE_TASKS_DUEDATE + " DATE     ," +
                 TABLE_TASKS_INITDATE + " DATE    ," +
 
-                TABLE_TASKS_EXPECTED + " REAL      ," +
-                TABLE_TASKS_PROGRESS + " INTEGER      ," +
-                TABLE_TASKS_IDPROJECT + " INTEGER      ," +
+                TABLE_TASKS_EXPECTED + " REAL     DEFAULT 0 ," +
+                TABLE_TASKS_PROGRESS + " INTEGER   DEFAULT 0   ," +
+                TABLE_TASKS_IDPROJECT + " INTEGER  ," +
 
                 " FOREIGN KEY (" + TABLE_TASKS_IDPROJECT + ") REFERENCES " + TABLE_PROJECTS + "(" + TABLE_PROJECTS_ID + ") ON DELETE CASCADE" +
             ")";

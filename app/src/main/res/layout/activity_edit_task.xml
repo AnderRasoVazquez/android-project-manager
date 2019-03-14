@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.tasks.EditTaskActivity">
+
+    <TextView
+        android:id="@+id/taskName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/taskName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/txtTaskName"
+        android:selectAllOnFocus="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/taskName"
+        app:layout_constraintTop_toBottomOf="@+id/taskName" />
+
+    <TextView
+        android:id="@+id/taskDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/projectDesc"
+        app:layout_constraintStart_toStartOf="@+id/txtTaskName"
+        app:layout_constraintTop_toBottomOf="@+id/txtTaskName" />
+
+    <EditText
+        android:id="@+id/txtTaskDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/taskDesc"
+        app:layout_constraintTop_toBottomOf="@+id/taskDesc" />
+
+    <TextView
+        android:id="@+id/taskDue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/dueDate"
+        app:layout_constraintStart_toStartOf="@+id/txtTaskDesc"
+        app:layout_constraintTop_toBottomOf="@+id/txtTaskDesc" />
+
+    <Button
+        android:id="@+id/saveTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/save"
+        app:layout_constraintStart_toStartOf="@+id/txtTaskDesc"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    <EditText
+        android:id="@+id/editDueDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="@+id/taskDue"
+        app:layout_constraintTop_toBottomOf="@+id/taskDue" />
+
+    <Button
+        android:id="@+id/buttonInsertDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/insert"
+        app:layout_constraintStart_toEndOf="@+id/editDueDate"
+        app:layout_constraintTop_toBottomOf="@+id/taskDue" />
+
+    <TextView
+        android:id="@+id/initDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/initDate"
+        app:layout_constraintStart_toStartOf="@+id/editDueDate"
+        app:layout_constraintTop_toBottomOf="@+id/editDueDate" />
+
+    <EditText
+        android:id="@+id/editWaitDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="@+id/initDate"
+        app:layout_constraintTop_toBottomOf="@+id/initDate" />
+
+    <Button
+        android:id="@+id/buttonInsertWaitDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/insert"
+        app:layout_constraintStart_toEndOf="@+id/editWaitDate"
+        app:layout_constraintTop_toBottomOf="@+id/initDate" />
+
+    <TextView
+        android:id="@+id/expected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/expected"
+        app:layout_constraintStart_toStartOf="@+id/editWaitDate"
+        app:layout_constraintTop_toBottomOf="@+id/editWaitDate" />
+
+    <EditText
+        android:id="@+id/editExpected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="@+id/expected"
+        app:layout_constraintTop_toBottomOf="@+id/expected" />
+
+    <TextView
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/progress"
+        app:layout_constraintStart_toStartOf="@+id/editExpected"
+        app:layout_constraintTop_toBottomOf="@+id/editExpected" />
+
+    <SeekBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:max="100"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/progress"
+        app:layout_constraintTop_toBottomOf="@+id/progress" />
+
+</android.support.constraint.ConstraintLayout>

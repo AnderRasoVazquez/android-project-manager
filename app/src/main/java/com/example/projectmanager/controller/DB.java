@@ -216,6 +216,64 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+
+    public String getProject(int idProject) {
+        SQLiteDatabase db = instance.getReadableDatabase();
+
+        String[] fields = new String[]{
+                DBFields.TABLE_PROJECTS_ID,
+                DBFields.TABLE_PROJECTS_NAME,
+                DBFields.TABLE_PROJECTS_DESC,
+        };
+
+        String[] args = new String[]{Integer.toString(idProject)};
+
+        Cursor cursor = db.query(DBFields.TABLE_PROJECTS, fields, DBFields.TABLE_PROJECTS_ID + "=?", args, null, null, null);
+        cursor.moveToNext();
+
+        String result = getProjectInfo(cursor).toString();
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    public String getTask(int idTask) {
+        SQLiteDatabase db = instance.getReadableDatabase();
+
+        String[] args = new String[]{Integer.toString(idTask)};
+
+        Cursor cursor = db.query(DBFields.TABLE_TASKS, null, DBFields.TABLE_TASKS_ID + "=?", args, null, null, null);
+        cursor.moveToNext();
+
+        String result = getTask(cursor).toString();
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    // TODO este parece una copia del de abajo?
+    public JSONObject getProjectInfo(Cursor cursor) {
+        JSONObject oneJson = new JSONObject();
+        int columnIndex;
+        try {
+            columnIndex = cursor.getColumnIndex(DBFields.TABLE_PROJECTS_ID);
+            oneJson.put(DBFields.TABLE_PROJECTS_ID, cursor.getInt(columnIndex));
+
+            columnIndex = cursor.getColumnIndex(DBFields.TABLE_PROJECTS_NAME);
+            oneJson.put(DBFields.TABLE_PROJECTS_NAME, cursor.getString(columnIndex));
+
+            columnIndex = cursor.getColumnIndex(DBFields.TABLE_PROJECTS_DESC);
+            String desc = cursor.getString(columnIndex);
+            oneJson.put(DBFields.TABLE_PROJECTS_DESC, desc == null ? JSONObject.NULL : desc);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return oneJson;
+    }
+
     public JSONObject getProject(Cursor cursor) {
         JSONObject oneJson = new JSONObject();
         int columnIndex;
@@ -283,6 +341,118 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    public int addProject(String jsonProject) {
+        try {
+            JSONObject json = new JSONObject(jsonProject);
+            String name = json.getString(DBFields.TABLE_PROJECTS_NAME);
+            String desc = json.getString(DBFields.TABLE_PROJECTS_DESC);
+            String email = json.getString(DBFields.TABLE_MEMBERS_IDUSER);
+            desc = desc.equals("null") ? null : desc;
+
+            ContentValues values = new ContentValues();
+            values.put(DBFields.TABLE_PROJECTS_NAME, name);
+            values.put(DBFields.TABLE_PROJECTS_DESC, desc);
+
+            SQLiteDatabase db = instance.getWritableDatabase();
+
+            int idProject = (int) db.insert(DBFields.TABLE_PROJECTS, null, values);
+
+            ContentValues member = new ContentValues();
+            member.put(DBFields.TABLE_MEMBERS_IDPROJECT, idProject);
+            member.put(DBFields.TABLE_MEMBERS_IDUSER, email);
+
+            db.insert(DBFields.TABLE_MEMBERS, null, member);
+
+            db.close();
+
+            return idProject;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int addTask(String jsonTask) {
+        try {
+            JSONObject json = new JSONObject(jsonTask);
+            String name = json.getString(DBFields.TABLE_TASKS_NAME);
+            int idProjec = json.getInt(DBFields.TABLE_TASKS_IDPROJECT);
+
+            ContentValues values = new ContentValues();
+            values.put(DBFields.TABLE_TASKS_NAME, name);
+            values.put(DBFields.TABLE_TASKS_IDPROJECT, idProjec);
+//            values.put(DBFields.TABLE_TASKS_EXPECTED, 0.0);
+//            values.put(DBFields.TABLE_TASKS_PROGRESS, 0);
+
+            SQLiteDatabase db = instance.getWritableDatabase();
+
+            int idTask = (int) db.insert(DBFields.TABLE_TASKS, null, values);
+
+            db.close();
+
+            return idTask;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public void updateProject(String jsonProject) {
+        try {
+            JSONObject json = new JSONObject(jsonProject);
+            String name = json.getString(DBFields.TABLE_PROJECTS_NAME);
+            String desc = json.getString(DBFields.TABLE_PROJECTS_DESC);
+            int idProject = json.getInt(DBFields.TABLE_PROJECTS_ID);
+            desc = desc.equals("null") ? null : desc;
+
+            ContentValues values = new ContentValues();
+            values.put(DBFields.TABLE_PROJECTS_NAME, name);
+            values.put(DBFields.TABLE_PROJECTS_DESC, desc);
+
+            SQLiteDatabase db = instance.getWritableDatabase();
+
+            String[] args = new String[]{Integer.toString(idProject)};
+            db.update(DBFields.TABLE_PROJECTS, values, DBFields.TABLE_PROJECTS_ID + "=?", args);
+            db.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTask(String jsonTask) {
+        try {
+            JSONObject json = new JSONObject(jsonTask);
+
+            int taskId = json.getInt(DBFields.TABLE_TASKS_ID);
+            String name = json.getString(DBFields.TABLE_TASKS_NAME);
+            String desc = json.getString(DBFields.TABLE_TASKS_DESC);
+            String dueDate = json.getString(DBFields.TABLE_TASKS_DUEDATE);
+            String initDate = json.getString(DBFields.TABLE_TASKS_INITDATE);
+            double expected = json.getDouble(DBFields.TABLE_TASKS_EXPECTED);
+            int progress = json.getInt(DBFields.TABLE_TASKS_PROGRESS);
+
+            ContentValues values = new ContentValues();
+            values.put(DBFields.TABLE_TASKS_NAME, name);
+            values.put(DBFields.TABLE_TASKS_DESC, desc);
+            values.put(DBFields.TABLE_TASKS_DUEDATE, dueDate);
+            values.put(DBFields.TABLE_TASKS_INITDATE, initDate);
+            values.put(DBFields.TABLE_TASKS_EXPECTED, expected);
+            values.put(DBFields.TABLE_TASKS_PROGRESS, progress);
+
+            SQLiteDatabase db = instance.getWritableDatabase();
+
+            String[] args = new String[]{Integer.toString(taskId)};
+            db.update(DBFields.TABLE_TASKS, values, DBFields.TABLE_TASKS_ID + "=?", args);
+            db.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public JSONObject getTask(Cursor cursor) {
         JSONObject oneJson = new JSONObject();
         int columnIndex;
@@ -300,15 +470,14 @@ public class DB extends SQLiteOpenHelper {
 
             columnIndex = cursor.getColumnIndex(DBFields.TABLE_TASKS_DUEDATE);
             String due = cursor.getString(columnIndex);
-            oneJson.put(DBFields.TABLE_TASKS_DUEDATE, desc == null ? JSONObject.NULL : due);
+            oneJson.put(DBFields.TABLE_TASKS_DUEDATE, due == null ? JSONObject.NULL : due);
 
             columnIndex = cursor.getColumnIndex(DBFields.TABLE_TASKS_INITDATE);
             String init = cursor.getString(columnIndex);
-            oneJson.put(DBFields.TABLE_TASKS_INITDATE, desc == null ? JSONObject.NULL : init);
+            oneJson.put(DBFields.TABLE_TASKS_INITDATE, init == null ? JSONObject.NULL : init);
 
             columnIndex = cursor.getColumnIndex(DBFields.TABLE_TASKS_EXPECTED);
-            double expected = cursor.getDouble(columnIndex);
-            oneJson.put(DBFields.TABLE_TASKS_EXPECTED, desc == null ? JSONObject.NULL : expected);
+            oneJson.put(DBFields.TABLE_TASKS_EXPECTED, cursor.getDouble(columnIndex));
 
             columnIndex = cursor.getColumnIndex(DBFields.TABLE_TASKS_PROGRESS);
             oneJson.put(DBFields.TABLE_TASKS_PROGRESS, cursor.getDouble(columnIndex));
@@ -402,4 +571,5 @@ public class DB extends SQLiteOpenHelper {
 
         db.close();
     }
+
 }

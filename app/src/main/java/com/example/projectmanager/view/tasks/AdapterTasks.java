@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.model.Task;
+import com.example.projectmanager.utils.DateUtils;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
 import java.text.DateFormat;
@@ -71,7 +72,7 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
 
     public class ViewHolderTasks extends RecyclerView.ViewHolder {
 
-        TextView name, desc, due, totalTime;
+        TextView name, desc, due, expected;
         CircularProgressBar bar;
 
         public ViewHolderTasks(@NonNull View itemView) {
@@ -79,24 +80,28 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
             name = itemView.findViewById(R.id.taskName);
             desc = itemView.findViewById(R.id.taskDesc);
             due = itemView.findViewById(R.id.dueDate);
-            totalTime = itemView.findViewById(R.id.totalTime);
+            expected = itemView.findViewById(R.id.totalTime);
             bar = itemView.findViewById(R.id.circularProgressBar);
         }
 
         public void assignData(Task task) {
             name.setText(task.getName());
-            desc.setText(task.getDesc());
+            String taskDesc = task.getDesc();
+            if (taskDesc != null) {
+                desc.setText(taskDesc);
+            } else {
+                desc.setText("");
+            }
 
             Date dueDate = task.getDue();
-            String pattern = "MM/dd/yyyy";
-            DateFormat df = new SimpleDateFormat(pattern);
-            String dueString = df.format(dueDate);
+            if (dueDate != null) {
+                due.setText(DateUtils.toString(dueDate));
+            } else {
+                due.setText("");
+            }
 
-            due.setText(dueString);
-            String elapsedTime = Double.toString(task.getTotalTime());
-            totalTime.setText(elapsedTime);
+            expected.setText(Double.toString(task.getExpected()));
             bar.setProgress((float) task.getProgress());
-//            bar.setColor();
         }
     }
 }

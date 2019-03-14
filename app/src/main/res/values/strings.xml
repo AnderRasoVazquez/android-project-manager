@@ -15,10 +15,21 @@
     <string name="passNotEqual">Passwords aren\'t equal</string>
     <string name="userExists">That user already exists</string>
     <string name="blankTitleProject">Not named</string>
+    <string name="blankTitleTask">Not named</string>
     <string name="blankDescriptionProject">No description.</string>
     <string name="choose">Choose</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="title_activity_work">WorkActivity</string>
     <string name="title_activity_work_time">WorkTimeActivity</string>
+    <string name="projectName">Project Name</string>
+    <string name="projectDesc">Project Description</string>
+    <string name="save">Save</string>
+    <string name="taskName">Task name</string>
+    <string name="dueDate">Due Date</string>
+    <string name="insert">Insert</string>
+    <string name="initDate">Wait date</string>
+    <string name="expected">Expected</string>
+    <string name="progress">Progress</string>
+
 </resources>
