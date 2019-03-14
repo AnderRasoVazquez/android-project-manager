@@ -1,9 +1,12 @@
 package com.example.projectmanager.view.tasks;
 
+import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -13,6 +16,8 @@ import com.example.projectmanager.utils.DBFields;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Calendar;
 
 public class EditTaskActivity extends AppCompatActivity {
 
@@ -26,6 +31,31 @@ public class EditTaskActivity extends AppCompatActivity {
 
         this.taskId = getIntent().getExtras().getInt(DBFields.TABLE_TASKS_ID);
         System.out.println("el id del task es: " + taskId);
+
+        final TextView editDueDate = findViewById(R.id.editDueDate);
+        TextView editWaitDate = findViewById(R.id.editWaitDate);
+
+        SeekBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                TextView progressText = findViewById(R.id.textProgress);
+                progressText.setText(Integer.toString(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        addPopUpCalendar(editDueDate);
+        addPopUpCalendar(editWaitDate);
 
         setData();
 
@@ -98,5 +128,29 @@ public class EditTaskActivity extends AppCompatActivity {
     public void onBackPressed() {
         setResult(RESULT_OK);
         finish();
+    }
+
+    public void addPopUpCalendar(final TextView editText) {
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR);
+                int mMonth = c.get(Calendar.MONTH);
+                int mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(EditTaskActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                monthOfYear++;
+                                String month = String.format("%02d", monthOfYear);
+                                String day = String.format("%02d", dayOfMonth);
+                                editText.setText(year + "/" + month + "/" + day);
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
     }
 }

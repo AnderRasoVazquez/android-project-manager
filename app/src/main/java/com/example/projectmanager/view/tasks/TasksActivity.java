@@ -164,12 +164,8 @@ public class TasksActivity extends AppCompatActivity {
                                 obj.getInt(DBFields.TABLE_TASKS_PROGRESS),
                                 obj.getString(DBFields.TABLE_TASKS_NAME),
                                 desc,
-
-                                // TODO corregir
                                 due,
                                 init,
-//                                obj.getString(DBFields.TABLE_TASKS_DUEDATE),
-//                                obj.getString(DBFields.TABLE_TASKS_INITDATE),
                                 obj.getDouble(DBFields.TABLE_TASKS_EXPECTED)
                         )
                 );
