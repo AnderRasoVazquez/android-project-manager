@@ -105,6 +105,8 @@ public class WorkActivity extends AppCompatActivity {
             JSONObject jsonTask = new JSONObject();
             jsonTask.put("id_task", taskId);
             String stringResponse = DB.getInstance(getApplicationContext()).getWorkedTime(jsonTask.toString());
+            System.out.println("WORK TIME JSON");
+            System.out.println(stringResponse);
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray jarray = jsonResponse.getJSONArray("worktime");
 

@@ -359,7 +359,7 @@ public class DB extends SQLiteOpenHelper {
     }
 
     public void deleteProject(int idProject) {
-        SQLiteDatabase db = instance.getReadableDatabase();
+        SQLiteDatabase db = instance.getWritableDatabase();
 
         String[] args = new String[]{Integer.toString(idProject)};
         db.delete(DBFields.TABLE_PROJECTS, DBFields.TABLE_PROJECTS_ID + "=?", args);
@@ -368,7 +368,7 @@ public class DB extends SQLiteOpenHelper {
     }
 
     public void deleteTask(int idTask) {
-        SQLiteDatabase db = instance.getReadableDatabase();
+        SQLiteDatabase db = instance.getWritableDatabase();
 
         String[] args = new String[]{Integer.toString(idTask)};
         db.delete(DBFields.TABLE_TASKS, DBFields.TABLE_TASKS_ID + "=?", args);
@@ -395,10 +395,10 @@ public class DB extends SQLiteOpenHelper {
     }
 
     public void deleteWork(int idWork) {
-        SQLiteDatabase db = instance.getReadableDatabase();
+        SQLiteDatabase db = instance.getWritableDatabase();
 
-        String[] args = new String[]{Integer.toString(idWork)};
-        db.delete(DBFields.TABLE_WORKTIME, DBFields.TABLE_WORKTIME_ID + "=?", args);
+        String[] args = new String[]{String.valueOf(idWork)};
+        db.delete(DBFields.TABLE_WORKTIME, "id=?", args);
 
         db.close();
     }

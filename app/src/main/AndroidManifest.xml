@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".view.worktime.WorkActivity"
-            android:label="@string/title_activity_work"></activity>
+            android:label="@string/title_activity_work"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.register.RegisterActivity" />
         <activity android:name=".view.login.LoginActivity" />
         <activity android:name=".Debug">

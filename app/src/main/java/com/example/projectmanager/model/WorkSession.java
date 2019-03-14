@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class WorkSession {
     private int id;
-
     private Date date;
     private double time;
 
     public WorkSession(int id, Date date, double time) {
+        this.id = id;
         this.date = date;
         this.time = time;
     }
