@@ -12,7 +12,62 @@
         android:id="@+id/workReciclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical" />
-        <!--tools:layout_editor_absoluteX="8dp"-->
+        android:layout_marginTop="100dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddWork" />
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:clickable="true"
+        android:focusable="false"
+        android:id="@+id/editDate"
+        android:layout_width="121dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDate" />
+
+    <TextView
+        android:id="@+id/txtHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/hours"
+        app:layout_constraintStart_toEndOf="@+id/editDate"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editHours"
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="@+id/txtHours"
+        app:layout_constraintTop_toBottomOf="@+id/txtHours" />
+
+    <Button
+        android:id="@+id/buttonAddWork"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/add"
+        app:layout_constraintStart_toEndOf="@+id/editHours"
+        app:layout_constraintTop_toBottomOf="@+id/txtHours" />
+    <!--tools:layout_editor_absoluteX="8dp"-->
         <!--tools:layout_editor_absoluteY="8dp" />-->
 </android.support.constraint.ConstraintLayout>

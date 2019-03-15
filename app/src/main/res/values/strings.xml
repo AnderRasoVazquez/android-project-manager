@@ -31,5 +31,11 @@
     <string name="initDate">Wait date</string>
     <string name="expected">Expected</string>
     <string name="progress">Progress</string>
+    <string name="date">Date</string>
+    <string name="hours">Hours</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
+    <string name="changeHours">Enter new value</string>
 
 </resources>

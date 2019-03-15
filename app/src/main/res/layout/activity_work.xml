@@ -29,16 +29,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:layout_marginBottom="80dp"
-        app:layout_anchor="@id/fab"
-        app:backgroundTint="@color/colorAccent"
         app:srcCompat="@drawable/ic_alarm_add_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

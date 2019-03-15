@@ -4,13 +4,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Activity;
+import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.DB;
@@ -27,11 +33,13 @@ import java.util.Date;
 
 public class WorkActivity extends AppCompatActivity {
 
-    ArrayList<WorkSession> workSessionArrayList;
+    ArrayList<WorkSession> workSessionArrayList = new ArrayList<>();
     RecyclerView recycler;
     int projectId;
     String email;
     int taskId;
+    EditText editDate, editHours;
+    AdapterWork adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,10 @@ public class WorkActivity extends AppCompatActivity {
             }
         });
 
+        editDate = findViewById(R.id.editDate);
+        DateUtils.addPopUpCalendar(editDate, this);
+        editHours = findViewById(R.id.editHours);
+
         recycler = findViewById(R.id.workReciclerView);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
@@ -57,15 +69,67 @@ public class WorkActivity extends AppCompatActivity {
         taskId = getIntent().getExtras().getInt("id_task");
 
         populateArray();
+        adapter = new AdapterWork(workSessionArrayList);
 
-        final AdapterWork adapter = new AdapterWork(workSessionArrayList);
+        Button buttonAdd = findViewById(R.id.buttonAddWork);
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String date = editDate.getText().toString();
+                String hours = editHours.getText().toString();
+
+                if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(hours)) {
+                    double hoursDouble = Double.parseDouble(hours);
+                    try {
+                        JSONObject json = buildJSON(date, hoursDouble);
+                        DB.getInstance(getApplicationContext()).addWork(json.toString());
+                        populateArray();
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO editar?
                 int index = recycler.getChildLayoutPosition(v);
-                System.out.println("Click corto");
-                System.out.println(index);
+
+                final EditText editHourForDialog = new EditText(WorkActivity.this);
+                editHourForDialog.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editHourForDialog.setText(Double.toString(workSessionArrayList.get(index).getTime()));
+
+                final AlertDialog.Builder alert = new AlertDialog.Builder(WorkActivity.this);
+                final String date = DateUtils.toString( workSessionArrayList.get(index).getDate());
+
+                alert.setMessage(date);
+                alert.setTitle(R.string.changeHours);
+                alert.setView(editHourForDialog);
+
+                alert.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String text = editHourForDialog.getText().toString();
+                        if (!TextUtils.isEmpty(text)) {
+                            double hoursDouble = Double.parseDouble(text);
+                            try {
+                                JSONObject json = buildJSON(date, hoursDouble);
+                                DB.getInstance(getApplicationContext()).addWork(json.toString());
+                                populateArray();
+                                adapter.notifyDataSetChanged();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+
+                alert.show();
             }
         });
 
@@ -76,13 +140,11 @@ public class WorkActivity extends AppCompatActivity {
                 System.out.println(index);
                 AlertDialog.Builder builder = new AlertDialog.Builder(WorkActivity.this);
                 builder.setTitle(R.string.choose);
-                CharSequence[] opciones = {getText(R.string.edit), getText(R.string.delete)};
+                CharSequence[] opciones = {getText(R.string.delete)};
                 builder.setItems(opciones, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            System.out.println(R.string.edit);
-                        } else if (which == 1) {
                             System.out.println(R.string.delete);
 
                             DB.getInstance(WorkActivity.this).deleteWork(workSessionArrayList.get(index).getId());
@@ -110,7 +172,7 @@ public class WorkActivity extends AppCompatActivity {
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray jarray = jsonResponse.getJSONArray("worktime");
 
-            workSessionArrayList = new ArrayList<>();
+            workSessionArrayList.clear();
             for (int i = 0; i < jarray.length(); i++) {
                 JSONObject obj = jarray.getJSONObject(i);
                 int id = obj.getInt(DBFields.TABLE_WORKTIME_ID);
@@ -131,6 +193,18 @@ public class WorkActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private JSONObject buildJSON(String date, double hours) throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put(DBFields.TABLE_WORKTIME_IDUSER, email);
+        json.put(DBFields.TABLE_WORKTIME_IDPROJECT, projectId);
+        json.put(DBFields.TABLE_WORKTIME_IDTASK, taskId);
+        json.put(DBFields.TABLE_WORKTIME_DATE, date);
+        json.put(DBFields.TABLE_WORKTIME_HOURS, hours);
+
+        return json;
     }
 
 }

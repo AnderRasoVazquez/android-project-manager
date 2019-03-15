@@ -572,4 +572,38 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addWork(String jsonWork) {
+        try {
+            JSONObject json = new JSONObject(jsonWork);
+
+            String email = json.getString(DBFields.TABLE_WORKTIME_IDUSER);
+            int projectId = json.getInt(DBFields.TABLE_WORKTIME_IDPROJECT);
+            int taskId = json.getInt(DBFields.TABLE_WORKTIME_IDTASK);
+            String date = json.getString(DBFields.TABLE_WORKTIME_DATE);
+            double hours = json.getDouble(DBFields.TABLE_WORKTIME_HOURS);
+
+            ContentValues values = new ContentValues();
+            values.put(DBFields.TABLE_WORKTIME_IDUSER, email);
+            values.put(DBFields.TABLE_WORKTIME_IDPROJECT, projectId);
+            values.put(DBFields.TABLE_WORKTIME_IDTASK, taskId);
+            values.put(DBFields.TABLE_WORKTIME_DATE, date);
+            values.put(DBFields.TABLE_WORKTIME_HOURS, hours);
+
+            SQLiteDatabase db = instance.getWritableDatabase();
+
+            String[] args = new String[]{Integer.toString(taskId), date};
+
+            // TODO si esta igual es mejor incrementarlo?
+            int rows = db.update(DBFields.TABLE_WORKTIME, values, DBFields.TABLE_WORKTIME_IDTASK + "=? AND " + DBFields.TABLE_WORKTIME_DATE + "=?", args);
+            System.out.println("ROWS AFFECTED lolol: " + rows);
+            if (rows == 0){
+                db.insert(DBFields.TABLE_WORKTIME, null, values);
+            }
+
+            db.close();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
