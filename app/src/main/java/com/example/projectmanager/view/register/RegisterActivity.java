@@ -57,6 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Intent intent = new Intent(RegisterActivity.this, ProjectsActivity.class);
                         intent.putExtra("email", email);
                         startActivity(intent);
+                        finish();
                     }
 
                 } catch (JSONException e) {
