@@ -26,6 +26,9 @@ import java.util.Calendar;
 
 import static com.example.projectmanager.utils.DateUtils.addPopUpCalendar;
 
+/**
+ * Actividad para editar tareas.
+ */
 public class EditTaskActivity extends AppCompatActivity {
 
     int taskId;
@@ -42,6 +45,7 @@ public class EditTaskActivity extends AppCompatActivity {
         final TextView editDueDate = findViewById(R.id.editDueDate);
         TextView editWaitDate = findViewById(R.id.editWaitDate);
 
+        // Actualizar la info de progreso al mover la barra.
         SeekBar progressBar = findViewById(R.id.progressBar);
         progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -61,11 +65,13 @@ public class EditTaskActivity extends AppCompatActivity {
             }
         });
 
+        // Añadir dialogos de calendarios al hacer click.
         addPopUpCalendar(editDueDate, EditTaskActivity.this);
         addPopUpCalendar(editWaitDate, EditTaskActivity.this);
 
         setData();
 
+        // Guardar los datos.
         Button button = findViewById(R.id.saveTaskButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +106,7 @@ public class EditTaskActivity extends AppCompatActivity {
         });
 
 
+        // Abrir calendario.
         Button btnCalendar = findViewById(R.id.buttonCalendar);
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +116,9 @@ public class EditTaskActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Introducir los datos de la tarea.
+     */
     private void setData() {
         String response = DB.getInstance(getApplicationContext()).getTask(taskId);
         System.out.println(response);

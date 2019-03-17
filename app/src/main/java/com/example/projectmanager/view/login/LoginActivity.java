@@ -27,6 +27,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
+/**
+ * Actividad inicial. Se utiliza para hacer login en la app.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -86,7 +89,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // TODO mirar que funciona con Android 5
+    /**
+     * Exporta la base de datos.
+     */
     private void exportDatabase() {
         try {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -106,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
                         dst.close();
                         Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
                     } else {
-                        System.out.println("Path doesn't exist");
                         Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
                     }
                 } else {

@@ -3,6 +3,9 @@ package com.example.projectmanager.model;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Representa una tarea.
+ */
 public class Task {
 
     private int id;

@@ -15,6 +15,9 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter para el recyclerview de tiempos trabajados.
+ */
 public class AdapterWork extends RecyclerView.Adapter<AdapterWork.ViewHolderWork> implements View.OnClickListener, View.OnLongClickListener {
 
     ArrayList<WorkSession> workSessionArrayList;
@@ -67,6 +70,9 @@ public class AdapterWork extends RecyclerView.Adapter<AdapterWork.ViewHolderWork
         return true;
     }
 
+    /**
+     * ViewHolder para los tiempos trabajados.
+     */
     public class ViewHolderWork extends RecyclerView.ViewHolder {
         TextView date, time;
 

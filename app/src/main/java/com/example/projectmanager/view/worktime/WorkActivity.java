@@ -42,6 +42,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Actividad para mostrar los tiempos trabajados.
+ */
 public class WorkActivity extends AppCompatActivity {
 
     ArrayList<WorkSession> workSessionArrayList = new ArrayList<>();
@@ -84,6 +87,7 @@ public class WorkActivity extends AppCompatActivity {
         populateArray();
         adapter = new AdapterWork(workSessionArrayList);
 
+        // Añadir tiempo trabajado.
         Button buttonAdd = findViewById(R.id.buttonAddWork);
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +109,7 @@ public class WorkActivity extends AppCompatActivity {
             }
         });
 
+        // Editar tiempo trabajado.
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +151,7 @@ public class WorkActivity extends AppCompatActivity {
             }
         });
 
+        // Borrar tiempo trabajado.
         adapter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -175,15 +181,15 @@ public class WorkActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
 
-        // Notifications
+        // Notificaciones
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         final NotificationCompat.Builder theBuilder = new NotificationCompat.Builder(this, "IdCanal");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel elCanal = new NotificationChannel("IdCanal", "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
-            // configure channel here
             notificationManager.createNotificationChannel(elCanal);
         }
 
+        // Mostrar notificacion al hacer click
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,6 +206,9 @@ public class WorkActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Actualizar el total del tiempo trabajado.
+     */
     private void updateTotalTime() {
         TextView totalWorked = findViewById(R.id.txtTimeWorked);
         double totalTime = 0;
@@ -209,7 +218,9 @@ public class WorkActivity extends AppCompatActivity {
         totalWorked.setText(Double.toString(totalTime));
     }
 
-
+    /**
+     * Rellenar el array de tiempos trabajados.
+     */
     private void populateArray() {
         try {
 
@@ -246,6 +257,13 @@ public class WorkActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Construye un objeto JSON dada una fecha y sus horas.
+     * @param date
+     * @param hours
+     * @return
+     * @throws JSONException
+     */
     private JSONObject buildJSON(String date, double hours) throws JSONException {
         JSONObject json = new JSONObject();
 

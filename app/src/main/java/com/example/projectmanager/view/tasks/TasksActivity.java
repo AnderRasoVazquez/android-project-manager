@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * Actividad para mostrar tareas.
+ */
 public class TasksActivity extends AppCompatActivity {
 
     ArrayList<Task> taskArrayList = new ArrayList<>();
@@ -55,6 +58,7 @@ public class TasksActivity extends AppCompatActivity {
         final FloatingActionButton btnShowFinished = findViewById(R.id.taskShowCompleted);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Dependiendo de las preferencias el Button tiene diferente icono
         this.showCompletedTasks = prefs.getBoolean("show_completed", true);
         if (showCompletedTasks) {
             btnShowFinished.setImageResource(R.drawable.ic_visibility_black_24dp);
@@ -62,6 +66,7 @@ public class TasksActivity extends AppCompatActivity {
             btnShowFinished.setImageResource(R.drawable.ic_visibility_off_black_24dp);
         }
 
+        // Cambiar preferencia de ver tareas completadas al hacer click en el Button
         btnShowFinished.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +90,7 @@ public class TasksActivity extends AppCompatActivity {
         });
 
 
+        // Añadir tarea nueva.
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +116,7 @@ public class TasksActivity extends AppCompatActivity {
 
         populateArray();
 
+        // Ver tiempos trabajados.
         adapter = new AdapterTasks(taskArrayList);
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +131,7 @@ public class TasksActivity extends AppCompatActivity {
             }
         });
 
+        // Editar o borrar tarea.
         adapter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -154,13 +162,14 @@ public class TasksActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
     }
 
+    /**
+     * Rellenar el array de tareas.
+     */
     private void populateArray() {
         try {
             JSONObject jsonProject = new JSONObject();
             jsonProject.put("id_project", projectId);
             String stringResponse = DB.getInstance(getApplicationContext()).getTasks(jsonProject.toString());
-            System.out.println("LOLOLOL");
-            System.out.println(stringResponse);
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray jarray = jsonResponse.getJSONArray("tasks");
 
@@ -193,7 +202,6 @@ public class TasksActivity extends AppCompatActivity {
                     init = DateUtils.toDate(initDate);
                 }
 
-//    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected, ArrayList<WorkSession> workSessions) {
                 taskArrayList.add(
                         new Task(
                                 obj.getInt(DBFields.TABLE_TASKS_ID),

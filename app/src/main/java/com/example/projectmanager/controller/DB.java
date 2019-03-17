@@ -16,6 +16,9 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+/**
+ * Singleton para interactuar con la clase de datos.
+ */
 public class DB extends SQLiteOpenHelper {
 
     private static DB instance = null;
@@ -109,6 +112,11 @@ public class DB extends SQLiteOpenHelper {
         db.setForeignKeyConstraintsEnabled(true);
     }
 
+    /**
+     * Iniciar sesion.
+     * @param loginString
+     * @return
+     */
     public boolean login(String loginString) {
         try {
             JSONObject json = new JSONObject(loginString);
@@ -123,6 +131,11 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Registrarse.
+     * @param registerString
+     * @return
+     */
     public boolean register(String registerString) {
         try {
             JSONObject json = new JSONObject(registerString);
@@ -151,6 +164,12 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Comprobar si un usuario existe.
+     * @param email
+     * @param pass
+     * @return
+     */
     public boolean userExists(String email, String pass) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
@@ -167,6 +186,11 @@ public class DB extends SQLiteOpenHelper {
         return exists;
     }
 
+    /**
+     * Comprobar si un usuario existe.
+     * @param email
+     * @return
+     */
     public boolean userExists(String email) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
@@ -183,6 +207,11 @@ public class DB extends SQLiteOpenHelper {
         return exists;
     }
 
+    /**
+     * Devuelve los proyectos en formato JSON dado un JSON con el email del usuario.
+     * @param jsonUser
+     * @return
+     */
     public String getProjects(String jsonUser) {
         try {
             JSONObject json = new JSONObject(jsonUser);
@@ -222,6 +251,11 @@ public class DB extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * Devuelve un JSON de un proyecto dado el id del proyecto.
+     * @param idProject
+     * @return
+     */
     public String getProject(int idProject) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
@@ -243,6 +277,11 @@ public class DB extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Devuelve un JSON de una tarea dado su id.
+     * @param idTask
+     * @return
+     */
     public String getTask(int idTask) {
         SQLiteDatabase db = instance.getReadableDatabase();
 
@@ -259,8 +298,12 @@ public class DB extends SQLiteOpenHelper {
         return result;
     }
 
-    // TODO este parece una copia del de abajo?
-    public JSONObject getProjectInfo(Cursor cursor) {
+    /**
+     * Devuelve un objeto JSON con la informacion de un proyecto dado un cursor.
+     * @param cursor
+     * @return
+     */
+    private JSONObject getProjectInfo(Cursor cursor) {
         JSONObject oneJson = new JSONObject();
         int columnIndex;
         try {
@@ -279,6 +322,11 @@ public class DB extends SQLiteOpenHelper {
         return oneJson;
     }
 
+    /**
+     * Devuelve un objeto JSON con la informacion de un proyecto dado un cursor.
+     * @param cursor
+     * @return
+     */
     public JSONObject getProject(Cursor cursor) {
         JSONObject oneJson = new JSONObject();
         int columnIndex;
@@ -298,6 +346,11 @@ public class DB extends SQLiteOpenHelper {
         return oneJson;
     }
 
+    /**
+     * Devuelve las tareas de un proyecto en formato JSON dado un JSON con el id del proyecto.
+     * @param jsonProject
+     * @return
+     */
     public String getTasks(String jsonProject) {
         try {
             JSONObject json = new JSONObject(jsonProject);
@@ -346,6 +399,11 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Añade un proyecto y devuelve su id dado un JSON con la info del proyecto.
+     * @param jsonProject
+     * @return
+     */
     public int addProject(String jsonProject) {
         try {
             JSONObject json = new JSONObject(jsonProject);
@@ -378,6 +436,11 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Añade una tarea y devuelve su id dado un JSON con sus datos.
+     * @param jsonTask
+     * @return
+     */
     public int addTask(String jsonTask) {
         try {
             JSONObject json = new JSONObject(jsonTask);
@@ -404,6 +467,10 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Actualiza un proyecto dado un JSON con sus datos.
+     * @param jsonProject
+     */
     public void updateProject(String jsonProject) {
         try {
             JSONObject json = new JSONObject(jsonProject);
@@ -427,6 +494,10 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Actualiza una tarea dado un JSON con sus datos.
+     * @param jsonTask
+     */
     public void updateTask(String jsonTask) {
         try {
             JSONObject json = new JSONObject(jsonTask);
@@ -458,7 +529,12 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
-    public JSONObject getTask(Cursor cursor) {
+    /**
+     * Devuelve un objeto JSON de una tarea dado un cursor.
+     * @param cursor
+     * @return
+     */
+    private JSONObject getTask(Cursor cursor) {
         JSONObject oneJson = new JSONObject();
         int columnIndex;
         try {
@@ -497,6 +573,11 @@ public class DB extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * Devuelve un JSON del tiempo trabajado dado un JSON con el id de la tarea.
+     * @param taskJson
+     * @return
+     */
     public String getWorkedTime(String taskJson) {
         JSONObject json = new JSONObject();
         try {
@@ -532,6 +613,10 @@ public class DB extends SQLiteOpenHelper {
         return json.toString();
     }
 
+    /**
+     * Elimina un proyecto dado su id.
+     * @param idProject
+     */
     public void deleteProject(int idProject) {
         SQLiteDatabase db = instance.getWritableDatabase();
 
@@ -541,6 +626,10 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Elimina una tarea dado su id.
+     * @param idTask
+     */
     public void deleteTask(int idTask) {
         SQLiteDatabase db = instance.getWritableDatabase();
 
@@ -550,7 +639,12 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
-    public JSONObject formatOneWorkedTime(Cursor cursor) {
+    /**
+     * Devuelve un objeto JSON del tiempo trabajado dado un cursor.
+     * @param cursor
+     * @return
+     */
+    private JSONObject formatOneWorkedTime(Cursor cursor) {
         JSONObject json = new JSONObject();
         int columnIndex;
         try {
@@ -568,6 +662,10 @@ public class DB extends SQLiteOpenHelper {
         return json;
     }
 
+    /**
+     * Elimina el tiempo trabajado dado su id.
+     * @param idWork
+     */
     public void deleteWork(int idWork) {
         SQLiteDatabase db = instance.getWritableDatabase();
 
@@ -577,6 +675,10 @@ public class DB extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Añade tiempo trabajado dado un JSON con sus datos.
+     * @param jsonWork
+     */
     public void addWork(String jsonWork) {
         try {
             JSONObject json = new JSONObject(jsonWork);
@@ -598,9 +700,7 @@ public class DB extends SQLiteOpenHelper {
 
             String[] args = new String[]{Integer.toString(taskId), date};
 
-            // TODO si esta igual es mejor incrementarlo?
             int rows = db.update(DBFields.TABLE_WORKTIME, values, DBFields.TABLE_WORKTIME_IDTASK + "=? AND " + DBFields.TABLE_WORKTIME_DATE + "=?", args);
-            System.out.println("ROWS AFFECTED lolol: " + rows);
             if (rows == 0){
                 db.insert(DBFields.TABLE_WORKTIME, null, values);
             }

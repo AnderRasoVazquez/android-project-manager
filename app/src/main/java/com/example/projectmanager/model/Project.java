@@ -1,5 +1,8 @@
 package com.example.projectmanager.model;
 
+/**
+ * Representa un proyecto.
+ */
 public class Project {
     private int id;
     private String name;

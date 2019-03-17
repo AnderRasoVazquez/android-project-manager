@@ -14,6 +14,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter para el recyclerview de los proyectos.
+ */
 public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHolderProjects> implements View.OnClickListener, View.OnLongClickListener {
 
     ArrayList<Project> projectArrayList;
@@ -68,6 +71,9 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
         return true;
     }
 
+    /**
+     * ViewHolder para los proyectos.
+     */
     public class ViewHolderProjects extends RecyclerView.ViewHolder {
 
         TextView name, desc;

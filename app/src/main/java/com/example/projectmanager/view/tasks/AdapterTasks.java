@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Adapter para las tareas del recyclerview.
+ */
 public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTasks> implements View.OnClickListener, View.OnLongClickListener {
 
     ArrayList<Task> taskArrayList;
@@ -70,6 +73,9 @@ public class AdapterTasks extends RecyclerView.Adapter<AdapterTasks.ViewHolderTa
         return true;
     }
 
+    /**
+     * ViewHolder para las tareas.
+     */
     public class ViewHolderTasks extends RecyclerView.ViewHolder {
 
         TextView name, desc, due, expected;

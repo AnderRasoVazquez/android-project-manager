@@ -2,6 +2,9 @@ package com.example.projectmanager.model;
 
 import java.util.Date;
 
+/**
+ * Representa un dia trabajado.
+ */
 public class WorkSession {
     private int id;
     private Date date;

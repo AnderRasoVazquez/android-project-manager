@@ -13,6 +13,9 @@ import com.example.projectmanager.utils.DBFields;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Actividad para editar proyectos.
+ */
 public class EditProjectActivity extends AppCompatActivity {
 
     int projectId;
@@ -23,10 +26,10 @@ public class EditProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_project);
 
         this.projectId = getIntent().getExtras().getInt(DBFields.TABLE_PROJECTS_ID);
-        System.out.println("el id del proyecto es: " + projectId);
 
         setData();
 
+        // Guardar proyecto.
         Button button = findViewById(R.id.saveProjectButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +55,9 @@ public class EditProjectActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Introducir datos en los campos.
+     */
     private void setData() {
         String response = DB.getInstance(getApplicationContext()).getProject(projectId);
         System.out.println(response);

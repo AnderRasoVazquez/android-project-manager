@@ -1,5 +1,9 @@
 package com.example.projectmanager.utils;
 
+/**
+ * Clase con los nombres de tablas y campos de la base de datos.
+ * Contiene consultas sql para crear tablas y vistas.
+ */
 public class DBFields {
 
     public static final String TABLE_USERS = "users";

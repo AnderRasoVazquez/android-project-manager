@@ -15,6 +15,9 @@ import com.example.projectmanager.view.projects.ProjectsActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Actividad para registrarse.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     @Override

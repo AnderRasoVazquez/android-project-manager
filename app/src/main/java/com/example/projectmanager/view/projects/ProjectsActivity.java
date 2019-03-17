@@ -26,6 +26,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Interfaz para mostrar los proyectos del usuario.
+ */
 public class ProjectsActivity extends AppCompatActivity {
 
     ArrayList<Project> projectArrayList = new ArrayList<>();
@@ -44,6 +47,7 @@ public class ProjectsActivity extends AppCompatActivity {
 
         this.email = getIntent().getExtras().getString("email");
 
+        // Crear proyecto.
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +74,7 @@ public class ProjectsActivity extends AppCompatActivity {
         populateArray();
         adapter = new AdapterProjects(projectArrayList);
 
+        // Ir a las tareas del proyecto.
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +87,7 @@ public class ProjectsActivity extends AppCompatActivity {
             }
         });
 
+        // Editar o borrar al hacer click prolongado.
         adapter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -96,7 +102,6 @@ public class ProjectsActivity extends AppCompatActivity {
                         if (which == 0) {
                             Intent intent = new Intent(ProjectsActivity.this, EditProjectActivity.class);
                             intent.putExtra(DBFields.TABLE_PROJECTS_ID, projectArrayList.get(index).getId());
-                            // TODO el 0 igual no vale, puede que tenga que hacer uno nuevo
                             startActivityForResult(intent, 0);
                         } else if (which == 1) {
                             DB.getInstance(ProjectsActivity.this).deleteProject(projectArrayList.get(index).getId());
@@ -114,7 +119,7 @@ public class ProjectsActivity extends AppCompatActivity {
     }
 
     /**
-     * Llena el array con el contenido del proyecto
+     * Llena el array con el contenido del proyecto.
      */
     private void populateArray() {
         try {
@@ -147,7 +152,6 @@ public class ProjectsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) { // proyecto añadido
             if (resultCode == RESULT_OK) {
-                System.out.println("he llegado aqui");
                 populateArray();
                 adapter.notifyDataSetChanged();
             }
