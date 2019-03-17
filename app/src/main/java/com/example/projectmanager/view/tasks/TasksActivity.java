@@ -3,7 +3,9 @@ package com.example.projectmanager.view.tasks;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.DB;
@@ -37,6 +40,7 @@ public class TasksActivity extends AppCompatActivity {
     int projectId;
     String email;
     AdapterTasks adapter;
+    boolean showCompletedTasks = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,39 @@ public class TasksActivity extends AppCompatActivity {
 
         projectId = getIntent().getExtras().getInt("id_project");
         email = getIntent().getExtras().getString("email");
+
+        final FloatingActionButton btnShowFinished = findViewById(R.id.taskShowCompleted);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        this.showCompletedTasks = prefs.getBoolean("show_completed", true);
+        if (showCompletedTasks) {
+            btnShowFinished.setImageResource(R.drawable.ic_visibility_black_24dp);
+        } else {
+            btnShowFinished.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+        }
+
+        btnShowFinished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor edit = prefs.edit();
+                String message;
+                if (showCompletedTasks) {
+                    btnShowFinished.setImageResource(R.drawable.ic_visibility_off_black_24dp);
+                    edit.putBoolean("show_completed", false);
+                    message = getText(R.string.toastDontShowCompleted).toString();
+                } else {
+                    btnShowFinished.setImageResource(R.drawable.ic_visibility_black_24dp);
+                    edit.putBoolean("show_completed", true);
+                    message = getText(R.string.toastShowCompleted).toString();
+                }
+                showCompletedTasks = !showCompletedTasks;
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                edit.apply();
+                populateArray();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -127,18 +164,17 @@ public class TasksActivity extends AppCompatActivity {
             JSONObject jsonResponse = new JSONObject(stringResponse);
             JSONArray jarray = jsonResponse.getJSONArray("tasks");
 
-//            public static final String TABLE_TASKS = "tasks";
-//            public static final String TABLE_TASKS_ID = "id";
-//            public static final String TABLE_TASKS_NAME = "name";
-//            public static final String TABLE_TASKS_DESC = "desc";
-//            public static final String TABLE_TASKS_DUEDATE = "due_date";
-//            public static final String TABLE_TASKS_INITDATE = "init_date";
-//            public static final String TABLE_TASKS_EXPECTED = "expected";
-//            public static final String TABLE_TASKS_PROGRESS = "progress";
-//            public static final String TABLE_TASKS_IDPROJECT = "id_project";
             taskArrayList.clear();
             for (int i = 0; i < jarray.length(); i++) {
                 JSONObject obj = jarray.getJSONObject(i);
+                int progress = obj.getInt(DBFields.TABLE_TASKS_PROGRESS);
+
+                if (!showCompletedTasks) {
+                    if (progress == 100) {
+                        continue;
+                    }
+                }
+
                 String desc = obj.getString(DBFields.TABLE_TASKS_DESC);
                 desc = desc.equals("null")? null : desc;
                 String dueDate = obj.getString(DBFields.TABLE_TASKS_DUEDATE);
@@ -161,7 +197,7 @@ public class TasksActivity extends AppCompatActivity {
                 taskArrayList.add(
                         new Task(
                                 obj.getInt(DBFields.TABLE_TASKS_ID),
-                                obj.getInt(DBFields.TABLE_TASKS_PROGRESS),
+                                progress,
                                 obj.getString(DBFields.TABLE_TASKS_NAME),
                                 desc,
                                 due,

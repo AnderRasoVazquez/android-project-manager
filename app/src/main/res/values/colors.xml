@@ -6,4 +6,5 @@
     <color name="colorPrimary">#283655</color>
     <color name="colorPrimaryDark">#1e1f26</color>
     <color name="colorAccent">#42648d</color>
+    <color name="colorSecondaryButton">#8D7242</color>
 </resources>

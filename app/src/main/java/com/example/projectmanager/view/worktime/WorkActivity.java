@@ -1,12 +1,20 @@
 package com.example.projectmanager.view.worktime;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.renderscript.ScriptGroup;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,12 +25,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.DB;
 import com.example.projectmanager.model.WorkSession;
 import com.example.projectmanager.utils.DBFields;
 import com.example.projectmanager.utils.DateUtils;
+import com.example.projectmanager.view.login.LoginActivity;
+import com.example.projectmanager.view.projects.ProjectsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,14 +59,13 @@ public class WorkActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        //
+        long startTime = getIntent().getExtras().getLong("startTime");
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("elapsed");
+        System.out.println(elapsedTime);
+        //
 
         editDate = findViewById(R.id.editDate);
         DateUtils.addPopUpCalendar(editDate, this);
@@ -67,6 +77,9 @@ public class WorkActivity extends AppCompatActivity {
         projectId = getIntent().getExtras().getInt("id_project");
         email = getIntent().getExtras().getString("email");
         taskId = getIntent().getExtras().getInt("id_task");
+        System.out.println("projectId " + projectId);
+        System.out.println("email " + email);
+        System.out.println("taskId " + taskId);
 
         populateArray();
         adapter = new AdapterWork(workSessionArrayList);
@@ -151,6 +164,7 @@ public class WorkActivity extends AppCompatActivity {
 
                             workSessionArrayList.remove(index);
                             adapter.notifyItemRemoved(index);
+                            updateTotalTime();
                         }
                     }
                 });
@@ -160,10 +174,45 @@ public class WorkActivity extends AppCompatActivity {
         });
         recycler.setAdapter(adapter);
 
+
+        // Notifications
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationCompat.Builder theBuilder = new NotificationCompat.Builder(this, "IdCanal");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel elCanal = new NotificationChannel("IdCanal", "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
+            // configure channel here
+            notificationManager.createNotificationChannel(elCanal);
+        }
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                theBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setContentTitle(getText(R.string.reminderTitle))
+                        .setContentText(getText(R.string.reminderDesc))
+                        .setVibrate(new long[]{0, 1000, 500, 1000})
+                        .setAutoCancel(true);
+                notificationManager.notify(1, theBuilder.build());
+                Snackbar.make(view, R.string.reminderSet, Snackbar.LENGTH_LONG).show();
+            }
+        });
+
     }
+
+    private void updateTotalTime() {
+        TextView totalWorked = findViewById(R.id.txtTimeWorked);
+        double totalTime = 0;
+        for (WorkSession w: workSessionArrayList) {
+            totalTime += w.getTime();
+        }
+        totalWorked.setText(Double.toString(totalTime));
+    }
+
 
     private void populateArray() {
         try {
+
             JSONObject jsonTask = new JSONObject();
             jsonTask.put("id_task", taskId);
             String stringResponse = DB.getInstance(getApplicationContext()).getWorkedTime(jsonTask.toString());
@@ -188,6 +237,8 @@ public class WorkActivity extends AppCompatActivity {
                         )
                 );
             }
+            updateTotalTime();
+
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -206,5 +257,4 @@ public class WorkActivity extends AppCompatActivity {
 
         return json;
     }
-
 }

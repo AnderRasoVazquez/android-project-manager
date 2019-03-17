@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Project Manager</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_projects">ProjectsActivity</string>
-    <string name="title_activity_tasks">TasksActivity</string>
+    <string name="title_activity_projects">Projects</string>
+    <string name="title_activity_tasks">Tasks</string>
     <string name="txtEmail">email</string>
     <string name="txtLoginPassword">password</string>
     <string name="btnLogin">login</string>
@@ -20,8 +20,8 @@
     <string name="choose">Choose</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="title_activity_work">WorkActivity</string>
-    <string name="title_activity_work_time">WorkTimeActivity</string>
+    <string name="title_activity_work">Work</string>
+    <string name="title_activity_work_time">Work</string>
     <string name="projectName">Project Name</string>
     <string name="projectDesc">Project Description</string>
     <string name="save">Save</string>
@@ -37,5 +37,16 @@
     <string name="cancel">Cancel</string>
     <string name="update">Update</string>
     <string name="changeHours">Enter new value</string>
-
+    <string name="reminderTitle">Reminder</string>
+    <string name="reminderDesc">Don\'t forget to add today\'s work.</string>
+    <string name="reminderSet">A notification has been set as a reminder.</string>
+    <string name="calendar">Calendar</string>
+    <string name="showCompleted">Show completed</string>
+    <string name="toastShowCompleted">Show completed tasks</string>
+    <string name="toastDontShowCompleted">Hide completed tasks</string>
+    <string name="dbSaved">Database saved</string>
+    <string name="totalWorked">Total Worked:</string>
+    <string name="noWritePrivileges">App doesn\'t have write privileges</string>
+    <string name="pathNoExists">Database doesn\'t exist yet, try to login at least one time</string>
+    <string name="infoNew">email: demo | pass: demo</string>
 </resources>

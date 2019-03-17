@@ -51,8 +51,8 @@ public class DB extends SQLiteOpenHelper {
         db.insert(DBFields.TABLE_USERS, null, demoUser);
 
         ContentValues demoProject = new ContentValues();
-        demoProject.put(DBFields.TABLE_PROJECTS_NAME, "Demo");
-//        demoProject.put(DBFields.TABLE_PROJECTS_DESC, "");
+        demoProject.put(DBFields.TABLE_PROJECTS_NAME, "TFG");
+        demoProject.put(DBFields.TABLE_PROJECTS_DESC, "En este proyecto se representan las tareas del TFG.");
         long idDemoProject = db.insert(DBFields.TABLE_PROJECTS, null, demoProject);
 
         ContentValues demoMember = new ContentValues();
@@ -61,34 +61,39 @@ public class DB extends SQLiteOpenHelper {
         db.insert(DBFields.TABLE_MEMBERS, null, demoMember);
 
         ContentValues demoTask = new ContentValues();
-        demoTask.put(DBFields.TABLE_TASKS_NAME, "Task no title");
-        demoTask.put(DBFields.TABLE_TASKS_DESC, "Task no desc");
-        demoTask.put(DBFields.TABLE_TASKS_DUEDATE, "18/10/02");
-        demoTask.put(DBFields.TABLE_TASKS_INITDATE, "17/10/02");
+        demoTask.put(DBFields.TABLE_TASKS_NAME, "1.1 Una tarea ya realizada.");
+        demoTask.put(DBFields.TABLE_TASKS_DESC, "Que magnífica descripción.");
+        demoTask.put(DBFields.TABLE_TASKS_DUEDATE, "2019/03/20");
+        demoTask.put(DBFields.TABLE_TASKS_INITDATE, "2019/02/01");
         demoTask.put(DBFields.TABLE_TASKS_EXPECTED, 7.5);
-        demoTask.put(DBFields.TABLE_TASKS_PROGRESS, 50);
+        demoTask.put(DBFields.TABLE_TASKS_PROGRESS, 100);
         demoTask.put(DBFields.TABLE_TASKS_IDPROJECT, idDemoProject);
         long idTask = db.insert(DBFields.TABLE_TASKS, null, demoTask);
+
+        demoTask = new ContentValues();
+        demoTask.put(DBFields.TABLE_TASKS_NAME, "1.2 Esta tarea no se ha terminado.");
+        demoTask.put(DBFields.TABLE_TASKS_DESC, "Otra descripción impresionante.");
+        demoTask.put(DBFields.TABLE_TASKS_DUEDATE, "2019/04/17");
+        demoTask.put(DBFields.TABLE_TASKS_INITDATE, "2019/03/01");
+        demoTask.put(DBFields.TABLE_TASKS_EXPECTED, 7.5);
+        demoTask.put(DBFields.TABLE_TASKS_PROGRESS, 25);
+        demoTask.put(DBFields.TABLE_TASKS_IDPROJECT, idDemoProject);
+        db.insert(DBFields.TABLE_TASKS, null, demoTask);
 
         ContentValues demoWorktime;
         demoWorktime = new ContentValues();
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDPROJECT, idDemoProject);
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDTASK, idTask);
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDUSER, "demo");
-        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "18/11/02");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "2018/11/02");
         demoWorktime.put(DBFields.TABLE_WORKTIME_HOURS, 7.5);
         db.insert(DBFields.TABLE_WORKTIME, null, demoWorktime);
-//        public static final String TABLE_WORKTIME = "worktime";
-//        public static final String TABLE_WORKTIME_IDUSER = "id_user";
-//        public static final String TABLE_WORKTIME_IDTASK = "id_task";
-//        public static final String TABLE_WORKTIME_IDPROJECT = "id_project";
-//        public static final String TABLE_WORKTIME_DATE = "date";
-//        public static final String TABLE_WORKTIME_HOURS = "hours";
+
         demoWorktime = new ContentValues();
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDPROJECT, idDemoProject);
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDTASK, idTask);
         demoWorktime.put(DBFields.TABLE_WORKTIME_IDUSER, "demo");
-        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "18/11/22");
+        demoWorktime.put(DBFields.TABLE_WORKTIME_DATE, "2018/11/22");
         demoWorktime.put(DBFields.TABLE_WORKTIME_HOURS, 3);
         db.insert(DBFields.TABLE_WORKTIME, null, demoWorktime);
     }

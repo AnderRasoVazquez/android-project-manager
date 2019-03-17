@@ -1,9 +1,13 @@
 package com.example.projectmanager.view.tasks;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -92,6 +96,15 @@ public class EditTaskActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+
+        Button btnCalendar = findViewById(R.id.buttonCalendar);
+        btnCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent (Intent.ACTION_VIEW, android.net.Uri.parse("content://com.android.calendar/time/")));
             }
         });
     }
