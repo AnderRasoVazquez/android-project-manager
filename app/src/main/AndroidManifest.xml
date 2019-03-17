@@ -30,8 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Debug">
-        </activity>
         <activity
             android:name=".view.tasks.TasksActivity"
             android:label="@string/title_activity_tasks"
@@ -39,10 +37,6 @@
         <activity
             android:name=".view.projects.ProjectsActivity"
             android:label="@string/title_activity_projects"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
