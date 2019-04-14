@@ -18,7 +18,10 @@ import android.widget.Toast;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.DB;
-import com.example.projectmanager.view.projects.ProjectsActivity;
+import com.example.projectmanager.controller.Facade;
+import com.example.projectmanager.utils.HttpRequest;
+import com.example.projectmanager.utils.OnConnectionFailure;
+import com.example.projectmanager.utils.OnConnectionSuccess;
 import com.example.projectmanager.view.register.RegisterActivity;
 
 import org.json.JSONException;
@@ -32,11 +35,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
 
 /**
  * Actividad inicial. Se utiliza para hacer login en la app.
@@ -77,8 +79,36 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                conexionBDWebService c = new conexionBDWebService();
-                c.execute();
+//                String server = "http://192.168.1.128:5000";
+////              String server = "https://proyecto-das.herokuapp.com";
+//                String apiLogin = "/api/v1/login";
+//                String direccion = server + apiLogin;
+//                HashMap<String, String> headers = new HashMap<>();
+//                headers.put("Authorization", getBasicAuth(email, pass));
+
+//                HttpRequest.Builder builder = new HttpRequest.Builder();
+
+                HttpRequest.Builder builder = Facade.getInstance().login(getApplicationContext(), email, pass);
+
+                builder.run(new OnConnectionSuccess() {
+                            @Override
+                            public void onSuccess(int statusCode, JSONObject json) {
+                                System.out.println("Status code " + statusCode);
+                                try {
+                                    System.out.println(json.toString(4));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new OnConnectionFailure() {
+                            @Override
+                            public void onFailure(int statusCode, JSONObject json) {
+                                System.out.println("Connection failure!");
+                            }
+                        });
+
+//                conexionBDWebService c = new conexionBDWebService();
+//                c.execute();
 
 //                boolean success = true;
 //
@@ -191,6 +221,13 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    private static String getBasicAuth(String email, String pass) {
+        // TODO en que orden va usuario y pass?
+        String authString = email + ":" + pass;
+        byte[] authStringEnc = Base64.encode(authString.getBytes(), Base64.DEFAULT);
+        return "Basic " + new String(authStringEnc);
     }
 
 }
