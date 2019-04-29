@@ -42,9 +42,15 @@ public class EditProjectActivity extends AppCompatActivity {
                 String name = ((TextView) findViewById(R.id.txtTaskName)).getText().toString();
                 String desc = ((TextView) findViewById(R.id.txtTaskDesc)).getText().toString();
 
+                if (name.isEmpty()){
+                    return;
+                }
+
                 try {
                     json.put(DBFields.TABLE_PROJECTS_NAME, name);
-                    json.put(DBFields.TABLE_PROJECTS_DESC, desc);
+                    if (!desc.isEmpty()){
+                        json.put(DBFields.TABLE_PROJECTS_DESC, desc);
+                    }
 
                     editProject(projectId, json);
                 } catch (JSONException e) {
