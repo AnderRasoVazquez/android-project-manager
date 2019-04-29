@@ -104,6 +104,7 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
         if (body != null) {
             System.out.println("BODY NOT NULL");
             connection.setDoOutput(true);
+            connection.setDoInput(true);
             OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
             wr.write(body.toString());
             wr.flush();

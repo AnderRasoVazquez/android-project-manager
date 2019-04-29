@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -180,4 +181,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) { // registro conseguido
+            if (resultCode == RESULT_OK) {
+                EditText editEmail = findViewById(R.id.editEmail);
+                EditText editPass = findViewById(R.id.editPassword);
+                editEmail.setText(data.getExtras().getString("email"));
+                editPass.setText(data.getExtras().getString("password"));
+            }
+        }
+    }
 }

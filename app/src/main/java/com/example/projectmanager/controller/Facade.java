@@ -332,4 +332,23 @@ public class Facade {
                 .setHeaders(headers);
         return builder;
     }
+
+    /**
+     * Registrar al usuario.
+     * @param json
+     * @return
+     */
+    public HttpRequest.Builder register(JSONObject json){
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        System.out.println(json.toString());
+
+        HttpRequest.Builder builder = new HttpRequest.Builder();
+        builder.setRequestMethod(HttpRequest.RequestMethod.POST)
+                .setUrl(SERVER_ADDRESS + "/api/v1/users")
+                .setBody(json)
+                .setHeaders(headers);
+        return builder;
+    }
 }
