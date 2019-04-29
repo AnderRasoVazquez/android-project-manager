@@ -49,4 +49,8 @@
     <string name="noWritePrivileges">App doesn\'t have write privileges</string>
     <string name="pathNoExists">Database doesn\'t exist yet, try to login at least one time</string>
     <string name="infoNew">email: demo | pass: demo</string>
+    <string name="projectInvitation">%1$s invited you to: %2$s</string>
+    <string name="invite">Invite</string>
+    <string name="enterUserEmail">Enter user email</string>
+    <string name="send">Send</string>
 </resources>

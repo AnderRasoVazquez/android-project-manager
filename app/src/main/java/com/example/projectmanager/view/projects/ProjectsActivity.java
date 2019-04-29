@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.Facade;
@@ -90,7 +92,7 @@ public class ProjectsActivity extends AppCompatActivity {
                 System.out.println(index);
                 AlertDialog.Builder builder = new AlertDialog.Builder(ProjectsActivity.this);
                 builder.setTitle(R.string.choose);
-                CharSequence[] opciones = {getText(R.string.edit), getText(R.string.delete)};
+                CharSequence[] opciones = {getText(R.string.edit), getText(R.string.delete), getText(R.string.invite)};
                 builder.setItems(opciones, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -100,6 +102,8 @@ public class ProjectsActivity extends AppCompatActivity {
                             startActivityForResult(intent, 0);
                         } else if (which == 1) {
                             deleteProject(projectArrayList.get(index).getId(), index);
+                        } else if (which == 2) {
+                            showInviteDialgo(index);
                         }
                     }
                 });
@@ -109,6 +113,44 @@ public class ProjectsActivity extends AppCompatActivity {
         });
 
         recycler.setAdapter(adapter);
+    }
+
+    private void showInviteDialgo(int index) {
+        final String projectId = projectArrayList.get(index).getId();
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(ProjectsActivity.this);
+
+        final EditText editEmailDialog = new EditText(ProjectsActivity.this);
+
+        alert.setTitle(R.string.invite);
+        alert.setMessage(R.string.enterUserEmail);
+        alert.setView(editEmailDialog);
+
+        alert.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String email = editEmailDialog.getText().toString();
+                if (!TextUtils.isEmpty(email)) {
+                    HttpRequest.Builder builder = Facade.getInstance().inviteUserToProject(email, projectId);
+                    builder.run(new OnConnectionSuccess() {
+                        @Override
+                        public void onSuccess(int statusCode, JSONObject json) {
+                            System.out.println("usuario invitado");
+                        }
+                    }, new OnConnectionFailure() {
+                        @Override
+                        public void onFailure(int statusCode, JSONObject json) {
+                            System.out.println("usuario no invitado");
+                        }
+                    });
+                }
+            }
+        });
+        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.show();
     }
 
     private void createProject(JSONObject json) {

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Base64;
 
 import com.example.projectmanager.utils.HttpRequest;
+import com.example.projectmanager.utils.OnConnectionFailure;
+import com.example.projectmanager.utils.OnConnectionSuccess;
 
 import org.json.JSONObject;
 
@@ -71,7 +73,6 @@ public class Facade {
      * @return
      */
     private static String getBasicAuth(String email, String pass) {
-        // TODO en que orden va email y pass?
         String authString = email + ":" + pass;
         byte[] authStringEnc = Base64.encode(authString.getBytes(), Base64.DEFAULT);
         return "Basic " + new String(authStringEnc);
@@ -350,5 +351,56 @@ public class Facade {
                 .setBody(json)
                 .setHeaders(headers);
         return builder;
+    }
+
+
+    /**
+     * Actualiza el token de firebase del usuario.
+     * @param json
+     * @return
+     */
+    public void updateFirebaseToken(JSONObject json){
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("x-access-token", serverToken);
+        headers.put("Content-Type", "application/json");
+
+        System.out.println(json.toString());
+
+        HttpRequest.Builder builder = new HttpRequest.Builder();
+        builder.setRequestMethod(HttpRequest.RequestMethod.POST)
+                .setUrl(SERVER_ADDRESS + "/api/v1/users/token")
+                .setBody(json)
+                .setHeaders(headers);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                System.out.println("firebase token actualizado");
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("firebase token no actualizado");
+            }
+        });
+    }
+
+
+    /**
+     * Invita a un usuario a un projecto
+     * @param userEmail
+     * @param projectId
+     */
+    public HttpRequest.Builder inviteUserToProject(String userEmail, String projectId){
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("x-access-token", serverToken);
+
+        HttpRequest.Builder builder = new HttpRequest.Builder();
+        builder.setRequestMethod(HttpRequest.RequestMethod.PUT)
+                .setUrl(SERVER_ADDRESS + "/api/v1/projects/" + projectId + "/invite/" + userEmail)
+                .setHeaders(headers);
+
+        return builder;
+
     }
 }

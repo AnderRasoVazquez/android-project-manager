@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                                     edit.putString("server_token", serverToken);
                                     edit.apply();
                                     Facade.getInstance().setServerToken(serverToken);
+                                    updateFirebaseToken();
                                     // ir a projectos
                                     Intent intent = new Intent(LoginActivity.this, ProjectsActivity.class);
                                     startActivity(intent);
@@ -146,6 +147,21 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    public void updateFirebaseToken() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+        String firebase_token = prefs.getString("firebase_token", "");
+        if (firebase_token.isEmpty()) {
+            System.out.println("el token guardado esta vacio");
+            return;
+        }
+        JSONObject json = new JSONObject();
+        try {
+            json.put("firebase_token", firebase_token);
+            Facade.getInstance().updateFirebaseToken(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Exporta la base de datos.
      */
