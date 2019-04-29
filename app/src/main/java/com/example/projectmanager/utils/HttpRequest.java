@@ -37,7 +37,6 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
         }
     }
 
-    private Context context = null;
     private String url;
     private OnConnectionSuccess onConnectionSuccess;
     private OnConnectionFailure onConnectionFailure;
@@ -46,7 +45,6 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
     private String message;
     private HashMap<String, String> headers;
     private JSONObject body = null;
-//    private String token;
 
     private HttpRequest() { }
 
@@ -152,11 +150,6 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
     public static class Builder {
         HttpRequest t = new HttpRequest();
 
-        public Builder setContext(Context context) {
-            t.context = context;
-            return this;
-        }
-
         public Builder setUrl(String url) {
             t.url = url;
             return this;
@@ -171,13 +164,6 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
             t.body = body;
             return this;
         }
-
-
-// TODO como tengo el context podria obtener el token actual
-//        public Builder setToken(String token) {
-//            t.token = token;
-//            return this;
-//        }
 
         public Builder setHeaders(HashMap<String, String> headers) {
             t.headers = headers;

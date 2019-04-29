@@ -48,21 +48,19 @@ public class Facade {
 
     /**
      * Peticion de login.
-     * @param context
      * @param email
      * @param pass
      * @return
      */
     // TODO me sobra el context
-    public HttpRequest.Builder login(Context context, String email, String pass){
+    public HttpRequest.Builder login(String email, String pass){
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Authorization", getBasicAuth(email, pass));
 
         HttpRequest.Builder builder = new HttpRequest.Builder();
-        builder.setContext(context)
-                .setRequestMethod(HttpRequest.RequestMethod.GET)
-                .setUrl(URL_LOGIN)
-                .setHeaders(headers);
+        builder.setRequestMethod(HttpRequest.RequestMethod.GET)
+               .setUrl(URL_LOGIN)
+               .setHeaders(headers);
         return builder;
     }
 

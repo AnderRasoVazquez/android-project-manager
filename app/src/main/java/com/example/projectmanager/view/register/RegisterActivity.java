@@ -50,7 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
                     registerJson.put("name", username);
                     registerJson.put("pass", email);
 
-                    boolean success = DB.getInstance(getApplicationContext()).register(registerJson.toString());
+//                    boolean success = DB.getInstance(getApplicationContext()).register(registerJson.toString());
+                    boolean success = false;
 
                     if (!success) {
                         Toast toast = Toast.makeText(getApplicationContext(), R.string.userExists, Toast.LENGTH_SHORT);

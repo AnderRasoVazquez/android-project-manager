@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
 //                HttpRequest.Builder builder = new HttpRequest.Builder();
 
-                HttpRequest.Builder builder = Facade.getInstance().login(getApplicationContext(), email, pass);
+                HttpRequest.Builder builder = Facade.getInstance().login(email, pass);
 
                 builder.run(new OnConnectionSuccess() {
                             @Override
@@ -149,97 +149,35 @@ public class LoginActivity extends AppCompatActivity {
      * Exporta la base de datos.
      */
     private void exportDatabase() {
-        try {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-            } else {
-                File download_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-                if (download_folder.canWrite()) {
-                    String backupDBPath = "project.db";
-                    File currentDB = getDatabasePath(DB.getInstance(getApplicationContext()).getDatabaseName());
-                    File backupDB = new File(download_folder, backupDBPath);
-                    if (currentDB.exists()) {
-                        FileChannel src = new FileInputStream(currentDB).getChannel();
-                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                        dst.transferFrom(src, 0, src.size());
-                        src.close();
-                        dst.close();
-                        Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.noWritePrivileges), Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO peticion para recuperar base de datos
+//        try {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+//            } else {
+//                File download_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//
+//                if (download_folder.canWrite()) {
+//                    String backupDBPath = "project.db";
+//                    File currentDB = getDatabasePath(DB.getInstance(getApplicationContext()).getDatabaseName());
+//                    File backupDB = new File(download_folder, backupDBPath);
+//                    if (currentDB.exists()) {
+//                        FileChannel src = new FileInputStream(currentDB).getChannel();
+//                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
+//                        dst.transferFrom(src, 0, src.size());
+//                        src.close();
+//                        dst.close();
+//                        Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), getString(R.string.dbSaved), Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getApplicationContext(), getString(R.string.noWritePrivileges), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
-    private class conexionBDWebService extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... args) {
-//            String server = "http://192.168.1.128:5000";
-            String server = "https://proyecto-das.herokuapp.com";
-            String apiLogin = "/api/v1/login";
-            String direccion = server + apiLogin;
-            String authString = "admin:admin";
-            byte[] authStringEnc = Base64.encode(authString.getBytes(), Base64.DEFAULT);
-            String basicAuth = "Basic " + new String(authStringEnc);
-
-            HttpURLConnection urlConnection = null;
-            URL destino = null;
-            try {
-                destino = new URL(direccion);
-                urlConnection = (HttpURLConnection) destino.openConnection();
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(5000);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty ("Authorization", basicAuth);
-                int statusCode = urlConnection.getResponseCode();
-                System.out.println("el status code" + statusCode);
-                InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
-                String response = convertInputStreamToString(inputStream);
-                JSONObject json = new JSONObject(response);
-                System.out.println(json.toString(4));
-//                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
-//                out.print(parametrosJSON.toString());
-//                out.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            System.out.println("On post execute: " + s);
-            super.onPostExecute(s);
-        }
-    }
-
-    private static String convertInputStreamToString(InputStream inputStream) {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            while((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-
-    private static String getBasicAuth(String email, String pass) {
-        // TODO en que orden va usuario y pass?
-        String authString = email + ":" + pass;
-        byte[] authStringEnc = Base64.encode(authString.getBytes(), Base64.DEFAULT);
-        return "Basic " + new String(authStringEnc);
-    }
 
 }
