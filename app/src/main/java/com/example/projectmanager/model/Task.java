@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class Task {
 
-    private int id;
+    private String id;
     private int progress;
     private String name;
     private String desc;
@@ -16,7 +16,7 @@ public class Task {
     private Date init;
     private double expected;
 
-    public Task(int id, int progress, String name, String desc, Date due, Date init, double expected) {
+    public Task(String id, int progress, String name, String desc, Date due, Date init, double expected) {
         this.id = id;
         this.progress = progress;
         this.name = name;
@@ -70,7 +70,7 @@ public class Task {
         return init;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

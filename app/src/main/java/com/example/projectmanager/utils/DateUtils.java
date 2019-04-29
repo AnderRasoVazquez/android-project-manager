@@ -22,7 +22,7 @@ public class DateUtils {
      * @throws Exception
      */
     public static Date toDate(String dateString) throws Exception {
-        return new SimpleDateFormat("yyyy/MM/dd").parse(dateString);
+        return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
     }
 
     /**
@@ -37,7 +37,7 @@ public class DateUtils {
      * @return
      */
     public static String toString(Date date) {
-        return new SimpleDateFormat("yyyy/MM/dd").format(date);
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DateUtils {
                                 monthOfYear++;
                                 String month = String.format("%02d", monthOfYear);
                                 String day = String.format("%02d", dayOfMonth);
-                                editText.setText(year + "/" + month + "/" + day);
+                                editText.setText(year + "-" + month + "-" + day);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();

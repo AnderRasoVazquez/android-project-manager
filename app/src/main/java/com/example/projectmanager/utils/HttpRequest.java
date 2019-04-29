@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
     private int statusCode;
     private String message;
     private HashMap<String, String> headers;
-    private Object body = null;
+    private JSONObject body = null;
 //    private String token;
 
     private HttpRequest() { }
@@ -94,15 +95,22 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
         connection.setReadTimeout(30000);
         connection.setConnectTimeout(30000);
 
-        // TODO aqui un hashmap podria estar bien, iterar y poner las propiedades
+        // hashmap para poner las cabeceras
         if (headers != null) {
             for (Map.Entry<String, String> entry: headers.entrySet()){
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
         }
 
-//        connection.setRequestProperty("Content-Type", "application/json");
-//        connection.setRequestProperty("Authorization", "Bearer " + token);
+        // si hay un json lo añade
+        if (body != null) {
+            System.out.println("BODY NOT NULL");
+            connection.setDoOutput(true);
+            OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
+            wr.write(body.toString());
+            wr.flush();
+            wr.close();
+        }
 
         // TODO aqui poner json a enviar
 //        if (method == RequestMethod.POST) {
@@ -159,7 +167,7 @@ public class HttpRequest extends AsyncTask<Void, Void, JSONObject> {
             return this;
         }
 
-        public Builder setBody(Object body) {
+        public Builder setBody(JSONObject body) {
             t.body = body;
             return this;
         }

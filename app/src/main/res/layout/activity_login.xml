@@ -20,6 +20,7 @@
 
     <EditText
         android:id="@+id/editEmail"
+        android:text="admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -33,6 +34,7 @@
 
     <EditText
         android:id="@+id/editPassword"
+        android:text="admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

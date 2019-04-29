@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.projectmanager.R;
-import com.example.projectmanager.controller.DB;
+import com.example.projectmanager.controller.Facade;
 import com.example.projectmanager.model.Project;
 import com.example.projectmanager.utils.DBFields;
-import com.example.projectmanager.view.projects.AdapterProjects;
+import com.example.projectmanager.utils.HttpRequest;
+import com.example.projectmanager.utils.OnConnectionFailure;
+import com.example.projectmanager.utils.OnConnectionSuccess;
 import com.example.projectmanager.view.tasks.TasksActivity;
 
 import org.json.JSONArray;
@@ -33,7 +34,6 @@ public class ProjectsActivity extends AppCompatActivity {
 
     ArrayList<Project> projectArrayList = new ArrayList<>();
     RecyclerView recycler;
-    String email;
     AdapterProjects adapter;
 
     @Override
@@ -45,7 +45,6 @@ public class ProjectsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.email = getIntent().getExtras().getString("email");
 
         // Crear proyecto.
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -55,13 +54,9 @@ public class ProjectsActivity extends AppCompatActivity {
                 JSONObject initProj = new JSONObject();
                 try {
                     initProj.put(DBFields.TABLE_PROJECTS_NAME, getText(R.string.blankTitleProject));
-                    initProj.put(DBFields.TABLE_MEMBERS_IDUSER, email);
-                    initProj.put(DBFields.TABLE_PROJECTS_DESC, JSONObject.NULL);
-                    int idAddedProject = DB.getInstance(getApplicationContext()).addProject(initProj.toString());
 
-                    Intent intent = new Intent(ProjectsActivity.this, EditProjectActivity.class);
-                    intent.putExtra(DBFields.TABLE_PROJECTS_ID, idAddedProject);
-                    startActivityForResult(intent, 0);
+                    createProject(initProj);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -80,9 +75,9 @@ public class ProjectsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int index = recycler.getChildLayoutPosition(v);
                 Intent intent = new Intent(ProjectsActivity.this, TasksActivity.class);
-                int projectID = projectArrayList.get(index).getId();
+                String projectID = projectArrayList.get(index).getId();
                 intent.putExtra("id_project", projectID);
-                intent.putExtra("email", email);
+//                intent.putExtra("email", email);
                 startActivity(intent);
             }
         });
@@ -104,9 +99,7 @@ public class ProjectsActivity extends AppCompatActivity {
                             intent.putExtra(DBFields.TABLE_PROJECTS_ID, projectArrayList.get(index).getId());
                             startActivityForResult(intent, 0);
                         } else if (which == 1) {
-                            DB.getInstance(ProjectsActivity.this).deleteProject(projectArrayList.get(index).getId());
-                            projectArrayList.remove(index);
-                            adapter.notifyItemRemoved(index);
+                            deleteProject(projectArrayList.get(index).getId(), index);
                         }
                     }
                 });
@@ -118,33 +111,118 @@ public class ProjectsActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
     }
 
+    private void createProject(JSONObject json) {
+
+        HttpRequest.Builder builder = Facade.getInstance().addProject(json);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                try {
+                    String idAddedProject = json.getJSONObject("project").getString(DBFields.TABLE_PROJECTS_ID);
+                    Intent intent = new Intent(ProjectsActivity.this, EditProjectActivity.class);
+                    intent.putExtra(DBFields.TABLE_PROJECTS_ID, idAddedProject);
+                    startActivityForResult(intent, 0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+    }
+
     /**
      * Llena el array con el contenido del proyecto.
      */
     private void populateArray() {
-        try {
-            JSONObject jsonUser = new JSONObject();
-            jsonUser.put("email", email);
-            String stringResponse = DB.getInstance(getApplicationContext()).getProjects(jsonUser.toString());
-            JSONObject jsonResponse = new JSONObject(stringResponse);
-            JSONArray jarray = jsonResponse.getJSONArray("projects");
+        HttpRequest.Builder builder = Facade.getInstance().getProjects();
 
-            projectArrayList.clear();
-            for (int i = 0; i < jarray.length(); i++) {
-                JSONObject obj = jarray.getJSONObject(i);
-                String desc = obj.getString(DBFields.VIEW_PROJECTMEMBERS_DESCPROJECT);
-                desc = desc.equals("null")? "" : desc;
-                projectArrayList.add(
-                        new Project(
-                                obj.getInt(DBFields.VIEW_PROJECTMEMBERS_IDPROJECT),
-                                obj.getString(DBFields.VIEW_PROJECTMEMBERS_NAMEPROJECT),
-                                desc
-                        )
-                );
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                System.out.println("Status code " + statusCode);
+                try {
+                    System.out.println(json.toString(4));
+
+                    JSONArray jarray = json.getJSONArray("projects");
+
+                    projectArrayList.clear();
+                    for (int i = 0; i < jarray.length(); i++) {
+                        JSONObject obj = jarray.getJSONObject(i);
+                        String desc = obj.getString(DBFields.TABLE_PROJECTS_DESC);
+                        desc = desc.equals("null")? "" : desc;
+                        projectArrayList.add(
+                                new Project(
+                                        obj.getString(DBFields.TABLE_PROJECTS_ID),
+                                        obj.getString(DBFields.TABLE_PROJECTS_NAME),
+                                        desc
+                                )
+                        );
+                    }
+                    adapter.notifyDataSetChanged();
+
+
+                } catch (JSONException e) {
+                    // TODO mostrar error
+                    e.printStackTrace();
+                }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+//        try {
+//            JSONObject jsonUser = new JSONObject();
+////            jsonUser.put("email", email);
+//            String stringResponse = DB.getInstance(getApplicationContext()).getProjects(jsonUser.toString());
+//            JSONObject jsonResponse = new JSONObject(stringResponse);
+//            JSONArray jarray = jsonResponse.getJSONArray("projects");
+//
+//            projectArrayList.clear();
+//            for (int i = 0; i < jarray.length(); i++) {
+//                JSONObject obj = jarray.getJSONObject(i);
+//                String desc = obj.getString(DBFields.VIEW_PROJECTMEMBERS_DESCPROJECT);
+//                desc = desc.equals("null")? "" : desc;
+//                projectArrayList.add(
+//                        new Project(
+//                                obj.getInt(DBFields.VIEW_PROJECTMEMBERS_IDPROJECT),
+//                                obj.getString(DBFields.VIEW_PROJECTMEMBERS_NAMEPROJECT),
+//                                desc
+//                        )
+//                );
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    /**
+     * Elimina un proyecto.
+     * @param id
+     * @param index
+     */
+    private void deleteProject(String id, final int index){
+
+        HttpRequest.Builder builder = Facade.getInstance().deleteProject(id);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                projectArrayList.remove(index);
+                adapter.notifyItemRemoved(index);
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
     }
 
     @Override

@@ -3,15 +3,10 @@ package com.example.projectmanager.view.worktime;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Activity;
-import android.renderscript.ScriptGroup;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -24,16 +19,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.projectmanager.R;
-import com.example.projectmanager.controller.DB;
+import com.example.projectmanager.controller.Facade;
 import com.example.projectmanager.model.WorkSession;
 import com.example.projectmanager.utils.DBFields;
 import com.example.projectmanager.utils.DateUtils;
-import com.example.projectmanager.view.login.LoginActivity;
-import com.example.projectmanager.view.projects.ProjectsActivity;
+import com.example.projectmanager.utils.HttpRequest;
+import com.example.projectmanager.utils.OnConnectionFailure;
+import com.example.projectmanager.utils.OnConnectionSuccess;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,9 +44,7 @@ public class WorkActivity extends AppCompatActivity {
 
     ArrayList<WorkSession> workSessionArrayList = new ArrayList<>();
     RecyclerView recycler;
-    int projectId;
-    String email;
-    int taskId;
+    String taskId;
     EditText editDate, editHours;
     AdapterWork adapter;
 
@@ -77,11 +70,7 @@ public class WorkActivity extends AppCompatActivity {
         recycler = findViewById(R.id.workReciclerView);
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
-        projectId = getIntent().getExtras().getInt("id_project");
-        email = getIntent().getExtras().getString("email");
-        taskId = getIntent().getExtras().getInt("id_task");
-        System.out.println("projectId " + projectId);
-        System.out.println("email " + email);
+        taskId = getIntent().getExtras().getString("id_task");
         System.out.println("taskId " + taskId);
 
         populateArray();
@@ -98,10 +87,8 @@ public class WorkActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(date) && !TextUtils.isEmpty(hours)) {
                     double hoursDouble = Double.parseDouble(hours);
                     try {
-                        JSONObject json = buildJSON(date, hoursDouble);
-                        DB.getInstance(getApplicationContext()).addWork(json.toString());
-                        populateArray();
-                        adapter.notifyDataSetChanged();
+                        JSONObject json = buildCreateWorkJSON(date, hoursDouble);
+                        createWork(taskId, json);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -113,7 +100,7 @@ public class WorkActivity extends AppCompatActivity {
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int index = recycler.getChildLayoutPosition(v);
+                final int index = recycler.getChildLayoutPosition(v);
 
                 final EditText editHourForDialog = new EditText(WorkActivity.this);
                 editHourForDialog.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -132,10 +119,8 @@ public class WorkActivity extends AppCompatActivity {
                         if (!TextUtils.isEmpty(text)) {
                             double hoursDouble = Double.parseDouble(text);
                             try {
-                                JSONObject json = buildJSON(date, hoursDouble);
-                                DB.getInstance(getApplicationContext()).addWork(json.toString());
-                                populateArray();
-                                adapter.notifyDataSetChanged();
+                                JSONObject json = buildModWorkJSON(hoursDouble);
+                                modWork(workSessionArrayList.get(index).getId(), json);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -164,13 +149,7 @@ public class WorkActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            System.out.println(R.string.delete);
-
-                            DB.getInstance(WorkActivity.this).deleteWork(workSessionArrayList.get(index).getId());
-
-                            workSessionArrayList.remove(index);
-                            adapter.notifyItemRemoved(index);
-                            updateTotalTime();
+                            deleteWork(workSessionArrayList.get(index).getId(), index);
                         }
                     }
                 });
@@ -207,6 +186,77 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     /**
+     * Peticion para modificar un trabajo.
+     * @param workId
+     * @param json
+     */
+    private void modWork(String workId, JSONObject json){
+
+        HttpRequest.Builder builder = Facade.getInstance().modWork(workId, json);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                populateArray();
+                adapter.notifyDataSetChanged();
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+        updateTotalTime();
+    }
+    /**
+     * Peticion para crear un trabajo.
+     * @param taskId
+     * @param json
+     */
+    private void createWork(String taskId, JSONObject json){
+
+        HttpRequest.Builder builder = Facade.getInstance().addWork(taskId, json);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                populateArray();
+                adapter.notifyDataSetChanged();
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+        updateTotalTime();
+    }
+
+    /**
+     * Elimina un tiempo trabajado.
+     * @param id
+     * @param index
+     */
+    private void deleteWork(String id, final int index){
+
+        HttpRequest.Builder builder = Facade.getInstance().deleteWork(id);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                workSessionArrayList.remove(index);
+                adapter.notifyItemRemoved(index);
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+        updateTotalTime();
+    }
+
+    /**
      * Actualizar el total del tiempo trabajado.
      */
     private void updateTotalTime() {
@@ -222,39 +272,83 @@ public class WorkActivity extends AppCompatActivity {
      * Rellenar el array de tiempos trabajados.
      */
     private void populateArray() {
-        try {
+        HttpRequest.Builder builder = Facade.getInstance().getWorks(taskId);
 
-            JSONObject jsonTask = new JSONObject();
-            jsonTask.put("id_task", taskId);
-            String stringResponse = DB.getInstance(getApplicationContext()).getWorkedTime(jsonTask.toString());
-            System.out.println("WORK TIME JSON");
-            System.out.println(stringResponse);
-            JSONObject jsonResponse = new JSONObject(stringResponse);
-            JSONArray jarray = jsonResponse.getJSONArray("worktime");
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                System.out.println("Status code " + statusCode);
+                try {
+                    System.out.println(json.toString(4));
 
-            workSessionArrayList.clear();
-            for (int i = 0; i < jarray.length(); i++) {
-                JSONObject obj = jarray.getJSONObject(i);
-                int id = obj.getInt(DBFields.TABLE_WORKTIME_ID);
-                String dateString = obj.getString(DBFields.TABLE_WORKTIME_DATE);
-                Date date = DateUtils.toDate(dateString);
-                double timeWorked = obj.getDouble(DBFields.TABLE_WORKTIME_HOURS);
+                    JSONArray jarray = json.getJSONArray("works");
 
-                workSessionArrayList.add(
-                        new WorkSession(
-                                id,
-                                date,
-                                timeWorked
-                        )
-                );
+                    workSessionArrayList.clear();
+                    for (int i = 0; i < jarray.length(); i++) {
+                        JSONObject obj = jarray.getJSONObject(i);
+                        String id = obj.getString(DBFields.TABLE_WORKTIME_ID);
+                        String dateString = obj.getString(DBFields.TABLE_WORKTIME_DATE);
+                        Date date = DateUtils.toDate(dateString);
+                        double timeWorked = obj.getDouble(DBFields.TABLE_WORKTIME_HOURS);
+
+                        workSessionArrayList.add(
+                                new WorkSession(
+                                        id,
+                                        date,
+                                        timeWorked
+                                )
+                        );
+                    }
+                    updateTotalTime();
+                    adapter.notifyDataSetChanged();
+
+
+                } catch (JSONException e) {
+                    // TODO mostrar error
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            updateTotalTime();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+//        try {
+//
+//            JSONObject jsonTask = new JSONObject();
+//            jsonTask.put("id_task", taskId);
+//            String stringResponse = DB.getInstance(getApplicationContext()).getWorkedTime(jsonTask.toString());
+//            System.out.println("WORK TIME JSON");
+//            System.out.println(stringResponse);
+//            JSONObject jsonResponse = new JSONObject(stringResponse);
+//            JSONArray jarray = jsonResponse.getJSONArray("worktime");
+//
+//            workSessionArrayList.clear();
+//            for (int i = 0; i < jarray.length(); i++) {
+//                JSONObject obj = jarray.getJSONObject(i);
+//                String id = obj.getString(DBFields.TABLE_WORKTIME_ID);
+//                String dateString = obj.getString(DBFields.TABLE_WORKTIME_DATE);
+//                Date date = DateUtils.toDate(dateString);
+//                double timeWorked = obj.getDouble(DBFields.TABLE_WORKTIME_HOURS);
+//
+//                workSessionArrayList.add(
+//                        new WorkSession(
+//                                id,
+//                                date,
+//                                timeWorked
+//                        )
+//                );
+//            }
+//            updateTotalTime();
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -264,15 +358,22 @@ public class WorkActivity extends AppCompatActivity {
      * @return
      * @throws JSONException
      */
-    private JSONObject buildJSON(String date, double hours) throws JSONException {
+    private JSONObject buildCreateWorkJSON(String date, double hours) throws JSONException {
         JSONObject json = new JSONObject();
-
-        json.put(DBFields.TABLE_WORKTIME_IDUSER, email);
-        json.put(DBFields.TABLE_WORKTIME_IDPROJECT, projectId);
-        json.put(DBFields.TABLE_WORKTIME_IDTASK, taskId);
         json.put(DBFields.TABLE_WORKTIME_DATE, date);
         json.put(DBFields.TABLE_WORKTIME_HOURS, hours);
+        return json;
+    }
 
+    /**
+     * Construye un objeto JSON dada sus horas.
+     * @param hours
+     * @return
+     * @throws JSONException
+     */
+    private JSONObject buildModWorkJSON(double hours) throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put(DBFields.TABLE_WORKTIME_HOURS, hours);
         return json;
     }
 }

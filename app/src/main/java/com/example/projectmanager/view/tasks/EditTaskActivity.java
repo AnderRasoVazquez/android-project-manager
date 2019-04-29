@@ -1,28 +1,22 @@
 package com.example.projectmanager.view.tasks;
 
-import android.app.DatePickerDialog;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.projectmanager.R;
-import com.example.projectmanager.controller.DB;
+import com.example.projectmanager.controller.Facade;
 import com.example.projectmanager.utils.DBFields;
+import com.example.projectmanager.utils.HttpRequest;
+import com.example.projectmanager.utils.OnConnectionFailure;
+import com.example.projectmanager.utils.OnConnectionSuccess;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Calendar;
 
 import static com.example.projectmanager.utils.DateUtils.addPopUpCalendar;
 
@@ -31,7 +25,7 @@ import static com.example.projectmanager.utils.DateUtils.addPopUpCalendar;
  */
 public class EditTaskActivity extends AppCompatActivity {
 
-    int taskId;
+    String taskId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +33,7 @@ public class EditTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_task);
 
 
-        this.taskId = getIntent().getExtras().getInt(DBFields.TABLE_TASKS_ID);
+        this.taskId = getIntent().getExtras().getString(DBFields.TABLE_TASKS_ID);
         System.out.println("el id del task es: " + taskId);
 
         final TextView editDueDate = findViewById(R.id.editDueDate);
@@ -87,18 +81,24 @@ public class EditTaskActivity extends AppCompatActivity {
                 int progress = ((SeekBar) findViewById(R.id.progressBar)).getProgress();
 
                 try {
-                    json.put(DBFields.TABLE_TASKS_ID, taskId);
+                    if (name.isEmpty()) {
+                        return;
+                    }
                     json.put(DBFields.TABLE_TASKS_NAME, name);
-                    json.put(DBFields.TABLE_TASKS_DESC, desc);
-                    json.put(DBFields.TABLE_TASKS_DUEDATE, dueDate);
-                    json.put(DBFields.TABLE_TASKS_INITDATE, initDate);
+
+                    if (!desc.isEmpty()){
+                        json.put(DBFields.TABLE_TASKS_DESC, desc);
+                    }
+                    if (!dueDate.isEmpty()) {
+                        json.put(DBFields.TABLE_TASKS_DUEDATE, dueDate);
+                    }
+                    if (!initDate.isEmpty()) {
+                        json.put(DBFields.TABLE_TASKS_INITDATE, initDate);
+                    }
                     json.put(DBFields.TABLE_TASKS_EXPECTED, expected);
                     json.put(DBFields.TABLE_TASKS_PROGRESS, progress);
-//
-                    DB.getInstance(getApplicationContext()).updateTask(json.toString());
 
-                    setResult(RESULT_OK);
-                    finish();
+                    editTask(taskId, json);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -117,37 +117,99 @@ public class EditTaskActivity extends AppCompatActivity {
     }
 
     /**
+     * Edita la tarea
+     * @param taskId
+     * @param json
+     */
+    private void editTask(String taskId, JSONObject json) {
+        HttpRequest.Builder builder = Facade.getInstance().modTask(taskId, json);
+
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+    }
+
+    /**
      * Introducir los datos de la tarea.
      */
     private void setData() {
-        String response = DB.getInstance(getApplicationContext()).getTask(taskId);
-        System.out.println(response);
-        try {
-            JSONObject json = new JSONObject(response);
-            String name = json.getString(DBFields.TABLE_TASKS_NAME);
-            String desc = json.getString(DBFields.TABLE_TASKS_DESC);
-            desc = desc.equals("null") ? "" : desc;
+        HttpRequest.Builder builder = Facade.getInstance().getTask(taskId);
 
-            String dueDate = json.getString(DBFields.TABLE_TASKS_DUEDATE);
-            dueDate = dueDate.equals("null") ? "" : dueDate;
+        builder.run(new OnConnectionSuccess() {
+            @Override
+            public void onSuccess(int statusCode, JSONObject json) {
+                try {
+                    JSONObject taskJson = json.getJSONObject("task");
+                    String name = taskJson.getString(DBFields.TABLE_TASKS_NAME);
+                    String desc = taskJson.getString(DBFields.TABLE_TASKS_DESC);
+                    desc = desc.equals("null") ? "" : desc;
 
-            String initDate = json.getString(DBFields.TABLE_TASKS_INITDATE);
-            initDate = initDate.equals("null") ? "" : initDate;
+                    String dueDate = taskJson.getString(DBFields.TABLE_TASKS_DUEDATE);
+                    dueDate = dueDate.equals("null") ? "" : dueDate;
 
-            double expected = json.getDouble(DBFields.TABLE_TASKS_EXPECTED);
+                    String initDate = taskJson.getString(DBFields.TABLE_TASKS_INITDATE);
+                    initDate = initDate.equals("null") ? "" : initDate;
 
-            int progress = json.getInt(DBFields.TABLE_TASKS_PROGRESS);
+                    double expected = taskJson.getDouble(DBFields.TABLE_TASKS_EXPECTED);
 
-            ((TextView) findViewById(R.id.txtTaskName)).setText(name);
-            ((TextView) findViewById(R.id.txtTaskDesc)).setText(desc);
-            ((TextView) findViewById(R.id.editDueDate)).setText(dueDate);
-            ((TextView) findViewById(R.id.editWaitDate)).setText(initDate);
-            ((TextView) findViewById(R.id.editExpected)).setText(Double.toString(expected));
-            ((SeekBar) findViewById(R.id.progressBar)).setProgress(progress);
+                    int progress = taskJson.getInt(DBFields.TABLE_TASKS_PROGRESS);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+                    ((TextView) findViewById(R.id.txtTaskName)).setText(name);
+                    ((TextView) findViewById(R.id.txtTaskDesc)).setText(desc);
+                    ((TextView) findViewById(R.id.editDueDate)).setText(dueDate);
+                    ((TextView) findViewById(R.id.editWaitDate)).setText(initDate);
+                    ((TextView) findViewById(R.id.editExpected)).setText(Double.toString(expected));
+                    ((SeekBar) findViewById(R.id.progressBar)).setProgress(progress);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new OnConnectionFailure() {
+            @Override
+            public void onFailure(int statusCode, JSONObject json) {
+                System.out.println("Connection failure!");
+            }
+        });
+
+
+
+//        String response = DB.getInstance(getApplicationContext()).getTask(taskId);
+//        System.out.println(response);
+//        try {
+//            JSONObject json = new JSONObject(response);
+//            String name = json.getString(DBFields.TABLE_TASKS_NAME);
+//            String desc = json.getString(DBFields.TABLE_TASKS_DESC);
+//            desc = desc.equals("null") ? "" : desc;
+//
+//            String dueDate = json.getString(DBFields.TABLE_TASKS_DUEDATE);
+//            dueDate = dueDate.equals("null") ? "" : dueDate;
+//
+//            String initDate = json.getString(DBFields.TABLE_TASKS_INITDATE);
+//            initDate = initDate.equals("null") ? "" : initDate;
+//
+//            double expected = json.getDouble(DBFields.TABLE_TASKS_EXPECTED);
+//
+//            int progress = json.getInt(DBFields.TABLE_TASKS_PROGRESS);
+//
+//            ((TextView) findViewById(R.id.txtTaskName)).setText(name);
+//            ((TextView) findViewById(R.id.txtTaskDesc)).setText(desc);
+//            ((TextView) findViewById(R.id.editDueDate)).setText(dueDate);
+//            ((TextView) findViewById(R.id.editWaitDate)).setText(initDate);
+//            ((TextView) findViewById(R.id.editExpected)).setText(Double.toString(expected));
+//            ((SeekBar) findViewById(R.id.progressBar)).setProgress(progress);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

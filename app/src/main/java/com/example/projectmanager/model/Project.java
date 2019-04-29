@@ -4,17 +4,17 @@ package com.example.projectmanager.model;
  * Representa un proyecto.
  */
 public class Project {
-    private int id;
+    private String id;
     private String name;
     private String desc;
 
-    public Project(int id, String name, String desc) {
+    public Project(String id, String name, String desc) {
         this.id = id;
         this.name = name;
         this.desc = desc;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

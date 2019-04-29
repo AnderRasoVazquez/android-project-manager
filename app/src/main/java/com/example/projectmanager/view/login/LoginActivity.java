@@ -2,9 +2,11 @@ package com.example.projectmanager.view.login;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,11 +19,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.projectmanager.R;
-import com.example.projectmanager.controller.DB;
 import com.example.projectmanager.controller.Facade;
 import com.example.projectmanager.utils.HttpRequest;
 import com.example.projectmanager.utils.OnConnectionFailure;
 import com.example.projectmanager.utils.OnConnectionSuccess;
+import com.example.projectmanager.view.projects.ProjectsActivity;
 import com.example.projectmanager.view.register.RegisterActivity;
 
 import org.json.JSONException;
@@ -38,7 +40,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
 
 /**
  * Actividad inicial. Se utiliza para hacer login en la app.
@@ -96,7 +97,18 @@ public class LoginActivity extends AppCompatActivity {
                                 System.out.println("Status code " + statusCode);
                                 try {
                                     System.out.println(json.toString(4));
+                                    // guardar token
+                                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                                    SharedPreferences.Editor edit = prefs.edit();
+                                    String serverToken = json.getString("token");
+                                    edit.putString("server_token", serverToken);
+                                    edit.apply();
+                                    Facade.getInstance().setServerToken(serverToken);
+                                    // ir a projectos
+                                    Intent intent = new Intent(LoginActivity.this, ProjectsActivity.class);
+                                    startActivity(intent);
                                 } catch (JSONException e) {
+                                    // TODO mostrar error
                                     e.printStackTrace();
                                 }
                             }

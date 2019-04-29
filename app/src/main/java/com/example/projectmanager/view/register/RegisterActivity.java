@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.projectmanager.R;
-import com.example.projectmanager.controller.DB;
 import com.example.projectmanager.view.projects.ProjectsActivity;
 
 import org.json.JSONException;

@@ -6,11 +6,11 @@ import java.util.Date;
  * Representa un dia trabajado.
  */
 public class WorkSession {
-    private int id;
+    private String id;
     private Date date;
     private double time;
 
-    public WorkSession(int id, Date date, double time) {
+    public WorkSession(String id, Date date, double time) {
         this.id = id;
         this.date = date;
         this.time = time;
@@ -32,7 +32,7 @@ public class WorkSession {
         this.time = time;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
