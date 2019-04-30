@@ -1,9 +1,21 @@
 package com.example.projectmanager.view.projects;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.projectmanager.R;
@@ -16,12 +28,16 @@ import com.example.projectmanager.utils.OnConnectionSuccess;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Actividad para editar proyectos.
  */
 public class EditProjectActivity extends AppCompatActivity {
 
+    private final int CODE_CAPTURE = 0;
     String projectId;
+    ImageView imgView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +47,14 @@ public class EditProjectActivity extends AppCompatActivity {
         this.projectId = getIntent().getExtras().getString(DBFields.TABLE_PROJECTS_ID);
 
         setData();
+
+        imgView = findViewById(R.id.imageViewProject);
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+            }
+        });
 
         // Guardar proyecto.
         Button button = findViewById(R.id.saveProjectButton);
@@ -52,6 +76,17 @@ public class EditProjectActivity extends AppCompatActivity {
                         json.put(DBFields.TABLE_PROJECTS_DESC, desc);
                     }
 
+                    // TODO poner un campo mas con la imagen
+                    try {
+                        String imgString = getStringImage( ( (BitmapDrawable) imgView.getDrawable( ) ).getBitmap( ) );
+                        System.out.println("Tamaño imagen:");
+                        System.out.println(imgString.length());
+                        System.out.println(imgString);
+                        json.put(DBFields.TABLE_PROJECTS_IMG, imgString);
+                    } catch (Exception e) {
+
+                    }
+
                     editProject(projectId, json);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -59,6 +94,25 @@ public class EditProjectActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void takePicture(){
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
+            } else {
+                sendIntentTakePicture();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendIntentTakePicture() {
+        Intent elIntentFoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (elIntentFoto.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(elIntentFoto, CODE_CAPTURE);
+        }
     }
 
     /**
@@ -97,6 +151,14 @@ public class EditProjectActivity extends AppCompatActivity {
                     JSONObject projson = json.getJSONObject("project");
                     String name = projson.getString(DBFields.TABLE_PROJECTS_NAME);
                     String desc = projson.getString(DBFields.TABLE_PROJECTS_DESC);
+                    String img = projson.getString(DBFields.TABLE_PROJECTS_IMG);
+                    if ((img != null) && (!img.isEmpty())) {
+                        // TODO poner la imagen
+                        System.out.println("hay una imagen que poner ######################3");
+                        byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        imgView.setImageBitmap(decodedByte);
+                    }
 
                     desc = desc.equals("null") ? "" : desc;
 
@@ -136,5 +198,25 @@ public class EditProjectActivity extends AppCompatActivity {
     public void onBackPressed() {
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_CAPTURE && resultCode == RESULT_OK) {
+            System.out.println("HE SACADO LA FOTO #########################################");
+
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imgView.setImageBitmap(imageBitmap);
+        }
+    }
+
+    // TODO enviar como string codificado
+    private String getStringImage(Bitmap bm){
+        ByteArrayOutputStream ba=new ByteArrayOutputStream(  );
+        bm.compress( Bitmap.CompressFormat.PNG,90,ba );
+        byte[] by=ba.toByteArray();
+        String encod= Base64.encodeToString( by,Base64.DEFAULT );
+        return encod;
     }
 }

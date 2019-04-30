@@ -197,11 +197,13 @@ public class ProjectsActivity extends AppCompatActivity {
                         JSONObject obj = jarray.getJSONObject(i);
                         String desc = obj.getString(DBFields.TABLE_PROJECTS_DESC);
                         desc = desc.equals("null")? "" : desc;
+                        String img = obj.getString(DBFields.TABLE_PROJECTS_IMG);
                         projectArrayList.add(
                                 new Project(
                                         obj.getString(DBFields.TABLE_PROJECTS_ID),
                                         obj.getString(DBFields.TABLE_PROJECTS_NAME),
-                                        desc
+                                        desc,
+                                        img
                                 )
                         );
                     }

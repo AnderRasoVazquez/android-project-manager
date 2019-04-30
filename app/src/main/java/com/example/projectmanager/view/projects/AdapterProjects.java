@@ -1,10 +1,14 @@
 package com.example.projectmanager.view.projects;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.projectmanager.R;
@@ -77,16 +81,24 @@ public class AdapterProjects extends RecyclerView.Adapter<AdapterProjects.ViewHo
     public class ViewHolderProjects extends RecyclerView.ViewHolder {
 
         TextView name, desc;
+        ImageView imgView;
 
         public ViewHolderProjects(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.proyectName);
             desc = itemView.findViewById(R.id.proyectDescription);
+            imgView = itemView.findViewById(R.id.proyectImage);
         }
 
         public void assignData(Project project) {
             name.setText(project.getName());
             desc.setText(project.getDesc());
+            String img = project.getImg();
+            if (!img.isEmpty()) {
+                byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                imgView.setImageBitmap(decodedByte);
+            }
         }
     }
 }

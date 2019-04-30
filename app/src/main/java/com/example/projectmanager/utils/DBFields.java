@@ -15,6 +15,7 @@ public class DBFields {
     public static final String TABLE_PROJECTS_ID = "project_id";
     public static final String TABLE_PROJECTS_NAME = "name";
     public static final String TABLE_PROJECTS_DESC = "desc";
+    public static final String TABLE_PROJECTS_IMG = "img";
 
     public static final String TABLE_MEMBERS = "members";
     public static final String TABLE_MEMBERS_IDUSER = "id_user";
