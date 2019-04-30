@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -260,12 +261,8 @@ public class WorkActivity extends AppCompatActivity {
      * Actualizar el total del tiempo trabajado.
      */
     private void updateTotalTime() {
-        TextView totalWorked = findViewById(R.id.txtTimeWorked);
-        double totalTime = 0;
-        for (WorkSession w: workSessionArrayList) {
-            totalTime += w.getTime();
-        }
-        totalWorked.setText(Double.toString(totalTime));
+        AsyncSumTime asyncSumTime = new AsyncSumTime();
+        asyncSumTime.execute();
     }
 
     /**
@@ -375,5 +372,23 @@ public class WorkActivity extends AppCompatActivity {
         JSONObject json = new JSONObject();
         json.put(DBFields.TABLE_WORKTIME_HOURS, hours);
         return json;
+    }
+
+    private class AsyncSumTime extends AsyncTask<Void, Void, Double> {
+
+        @Override
+        protected Double doInBackground(Void... voids) {
+            double totalTime = 0;
+            for (WorkSession w: workSessionArrayList) {
+                totalTime += w.getTime();
+            }
+            return totalTime;
+        }
+
+        @Override
+        protected void onPostExecute(Double totalTime) {
+            TextView totalWorked = findViewById(R.id.txtTimeWorked);
+            totalWorked.setText(totalTime.toString());
+        }
     }
 }
