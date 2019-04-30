@@ -63,7 +63,9 @@ public class EditTaskActivity extends AppCompatActivity {
         addPopUpCalendar(editDueDate, EditTaskActivity.this);
         addPopUpCalendar(editWaitDate, EditTaskActivity.this);
 
-        setData();
+        if (savedInstanceState == null) {
+            setData();
+        }
 
         // Guardar los datos.
         Button button = findViewById(R.id.saveTaskButton);
@@ -216,6 +218,37 @@ public class EditTaskActivity extends AppCompatActivity {
     public void onBackPressed() {
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String name = ((TextView) findViewById(R.id.txtTaskName)).getText().toString();
+        String desc = ((TextView) findViewById(R.id.txtTaskDesc)).getText().toString();
+        String dueDate = ((TextView) findViewById(R.id.editDueDate)).getText().toString();
+        String initDate = ((TextView) findViewById(R.id.editWaitDate)).getText().toString();
+        double expected = Double.parseDouble(((TextView) findViewById(R.id.editExpected)).getText().toString());
+        int progress = ((SeekBar) findViewById(R.id.progressBar)).getProgress();
+
+
+        outState.putString("name", name);
+        outState.putString("desc", desc);
+        outState.putString("due_date", dueDate);
+        outState.putString("init_date", initDate);
+        outState.putDouble("expected", expected);
+        outState.putInt("progress", progress);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        ((TextView) findViewById(R.id.txtTaskName)).setText(savedInstanceState.getString("name"));
+        ((TextView) findViewById(R.id.txtTaskDesc)).setText(savedInstanceState.getString("desc"));
+        ((TextView) findViewById(R.id.editDueDate)).setText(savedInstanceState.getString("due_date"));
+        ((TextView) findViewById(R.id.editWaitDate)).setText(savedInstanceState.getString("init_date"));
+        String expected = Double.toString(savedInstanceState.getDouble("expected"));
+        ((TextView) findViewById(R.id.editExpected)).setText(expected);
+        ((SeekBar) findViewById(R.id.progressBar)).setProgress(savedInstanceState.getInt("progress"));
     }
 
 }

@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +47,9 @@ public class EditProjectActivity extends AppCompatActivity {
 
         this.projectId = getIntent().getExtras().getString(DBFields.TABLE_PROJECTS_ID);
 
-        setData();
+        if (savedInstanceState == null) {
+            setData();
+        }
 
         imgView = findViewById(R.id.imageViewProject);
         imgView.setOnClickListener(new View.OnClickListener() {
@@ -219,4 +222,34 @@ public class EditProjectActivity extends AppCompatActivity {
         String encod= Base64.encodeToString( by,Base64.DEFAULT );
         return encod;
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String name = ((TextView) findViewById(R.id.txtTaskName)).getText().toString();
+        String desc = ((TextView) findViewById(R.id.txtTaskDesc)).getText().toString();
+
+        outState.putString("name", name);
+        outState.putString("desc", desc);
+        try {
+            String imgString = getStringImage( ( (BitmapDrawable) imgView.getDrawable( ) ).getBitmap( ) );
+            outState.putString("img", imgString);
+        } catch (Exception e) { }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        ((TextView) findViewById(R.id.txtTaskName)).setText(savedInstanceState.getString("name"));
+        ((TextView) findViewById(R.id.txtTaskDesc)).setText(savedInstanceState.getString("desc"));
+
+        String img = savedInstanceState.getString("img");
+
+        if (img != null) {
+            byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            imgView.setImageBitmap(decodedByte);
+        }
+    }
+
 }
