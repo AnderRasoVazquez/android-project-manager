@@ -1,6 +1,7 @@
 package com.example.projectmanager.view.tasks;
 
 import android.content.Intent;
+import android.provider.CalendarContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +12,16 @@ import android.widget.TextView;
 import com.example.projectmanager.R;
 import com.example.projectmanager.controller.Facade;
 import com.example.projectmanager.utils.DBFields;
+import com.example.projectmanager.utils.DateUtils;
 import com.example.projectmanager.utils.HttpRequest;
 import com.example.projectmanager.utils.OnConnectionFailure;
 import com.example.projectmanager.utils.OnConnectionSuccess;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.projectmanager.utils.DateUtils.addPopUpCalendar;
 
@@ -113,9 +118,40 @@ public class EditTaskActivity extends AppCompatActivity {
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent (Intent.ACTION_VIEW, android.net.Uri.parse("content://com.android.calendar/time/")));
+//                startActivity(new Intent (Intent.ACTION_VIEW, android.net.Uri.parse("content://com.android.calendar/time/")));
+                addEventToCalendar();
             }
         });
+    }
+
+    private void addEventToCalendar(){
+        String dueDate = ((TextView) findViewById(R.id.editDueDate)).getText().toString();
+        if (dueDate.isEmpty()) {
+            return;
+        }
+        String name = ((TextView) findViewById(R.id.txtTaskName)).getText().toString();
+        String desc = ((TextView) findViewById(R.id.txtTaskDesc)).getText().toString();
+
+        Date due;
+        try {
+            due = DateUtils.toDate(dueDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Calendar beginTime = Calendar.getInstance();
+        beginTime.setTimeInMillis(due.getTime());
+//        Calendar endTime = Calendar.getInstance();
+//        endTime.setTimeInMillis(when+3600000);
+        Intent intent = new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis())
+//                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime.getTimeInMillis())
+                .putExtra(CalendarContract.Events.TITLE, name)
+                .putExtra(CalendarContract.Events.DESCRIPTION, desc);
+//                .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+        startActivity(intent);
     }
 
     /**

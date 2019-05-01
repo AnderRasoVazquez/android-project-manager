@@ -48,7 +48,7 @@
     <string name="totalWorked">Total Trabajado:</string>
     <string name="noWritePrivileges">La app no tiene permiso de escritura</string>
     <string name="pathNoExists">La base de datos no existe aún, intenta iniciar sesión al menos una vez</string>
-    <string name="infoNew">email: demo | contraseña: demo</string>
+    <string name="infoNew">email: admin | contraseña: admin</string>
     <string name="projectInvitation">%1$s te ha invitado a: %2$s</string>
     <string name="invite">Invitar</string>
     <string name="enterUserEmail">Introduce el email del usuario</string>
